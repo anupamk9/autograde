@@ -1,0 +1,47 @@
+<% content_for :stylesheets do %>
+  <%= stylesheet_link_tag "student_gradebook" %>
+<% end %>
+
+<div class="container-fluid">
+  <h4>Course Statistics</h4>
+
+  <div class="category">
+    <table class="grades">
+      <colgroup>
+        <col class="asmt_names">
+        <col class="gdu">
+        <col class="gdu">
+        <col class="gdu">
+        <col class="gdu">
+        <col class="gdu">
+      </colgroup>
+      <thead>
+        <tr class="header">
+          <th></th>
+          <th>Mean</th>
+          <th>Median</th>
+          <th>Std. Dev.</th>
+          <th>Min</th>
+          <th>Max</th>
+        </tr>
+      </thead>
+      <tbody>
+      <% @course_stats.each do |name, stats| %>
+        <tr>
+          <td>
+<%# TODO: RESTORE LINKS %>
+            <%= name %>
+<%# TODO: BAD! FIX!%>
+<%# name.end_with?(' Average') ? name : (link_to name, { :controller => name }, :class => :asmt_link)%>
+          </td>
+          <td><%= stats[:mean] %></td>
+          <td><%= stats[:median] %></td>
+          <td><%= stats[:stddev] %></td>
+          <td><%= stats[:min] %></td>
+          <td><%= stats[:max] %></td>
+        </tr>
+      <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>

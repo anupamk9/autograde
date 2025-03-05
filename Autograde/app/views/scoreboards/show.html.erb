@@ -1,0 +1,102 @@
+<% @title = "Scoreboard" %>
+
+<% content_for :javascripts do %>
+  <%= javascript_include_tag "course_user_data_edit" %>
+  <%= javascript_include_tag "sorttable" %>
+<% end %>
+
+<% unless @errorMessage.nil? %>
+  <h4 class="error-header">Error Rendering Scoreboard:</h4>
+  <div>
+    <pre style="white-space: pre-wrap"><%= @errorMessage %></pre>
+  </div>
+<% end %>
+
+<h4>Scoreboard</h4>
+
+<% if @grades.values.empty? %>
+  <strong>There are currently no submissions.</strong>
+<% else %>
+  <strong>
+    <% unless @scoreboard.banner.blank? %>
+      <%= sanitize @scoreboard.banner %>
+    <% end %>
+  </strong>
+
+  <table class="sortable prettyBorder">
+    <thead>
+      <tr>
+        <th>Rank</th>
+        <% if @config_header %>
+          <%= sanitize @config_header, tags: %w(th td) %>
+        <% else %>
+          <% if @colspec %>
+            <th>Nickname</th><th>Version</th><th>Time</th>
+            <% @colspec.each do |column| %>
+              <th><%= column["hdr"] %></th>
+            <% end %>
+          <% else %>
+            <th>Nickname</th><th>Version</th><th>Time</th><th>Total</th>
+            <% @assessment.problems.each do |problem| %>
+              <th><%= problem.name %></th>
+            <% end %>
+          <% end %>
+        <% end %>
+      </tr>
+    </thead>
+
+    <tbody>
+      <% @sortedGrades.each_with_index do |grade, i| %>
+        <tr>
+          <td><%= i + 1 %></td>
+          <td title="<%= @cud.instructor? ? "#{grade[:fullName]} (#{grade[:andrewID]})" : "" %>">
+            <%= grade[:nickname] %>
+          </td>
+          <td>
+            <% if grade[:version] == 0 %>
+              <font size="-2">Unofficial</font>
+            <% else %>
+              <%= grade[:version] %>
+            <% end %>
+          </td>
+          <td><span class="moment-date-time"><%= grade[:time] %></span></td>
+          <% if @colspec %>
+            <% @colspec.each_with_index do |c, i| %>
+              <%# this is a hack for 15-122's image lab.  It displays b64 encoded results in image tags %>
+              <% if c["img"] %>
+                <td><img src="data:image/png;base64,<%= grade[:entry][i] %>"></td>
+              <% else %>
+                <% if grade[:entry].is_a?(Array) && grade[:entry].length > i %>
+                  <td><%= grade[:entry][i] %></td>
+                <% else %>
+                  <%= render 'error_icon' %>
+                <% end %>
+              <% end %>
+            <% end %>
+          <% else %>
+            <%# this should be guaranteed to be an array, but for redundancy, check that entry is array %>
+            <% if grade[:entry].is_a?(Array) %>
+              <% grade[:entry].each do |column| %>
+                <td><%= column %></td>
+              <% end %>
+            <% else %>
+              <%= render 'error_icon' %>
+            <% end %>
+          <% end %>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+<% end %>
+
+<%= form_for @cud, url: course_course_user_datum_path(@course, @cud), builder: FormBuilderWithDateTimeInput do |f| %>
+  <hr>
+  <div class="row valign-wrapper">
+    <div class="col s6">
+      <%= f.text_field :nickname, help_text: "Anonymous nickname to display on the public scoreboards (max length: 32)", maxlength: 32 %>
+    </div>
+    <div class="col s6">
+      <input id="user_submit" name="commit" type="submit" class="btn" value="Update">
+    </div>
+  </div>
+<% end %>

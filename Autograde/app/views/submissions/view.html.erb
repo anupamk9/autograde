@@ -1,0 +1,164 @@
+<% @title = @cud.instructor || @cud.course_assistant ? "Annotate Submission" : "View Submission" %>
+
+<% content_for :stylesheets do %>
+  <%= external_stylesheet_link_tag "golden-layout-base" %>
+  <%= external_stylesheet_link_tag "golden-layout-theme" %>
+  <%= stylesheet_link_tag "annotations" %>
+  <%# highlightjs - change the style sheet for different styles %>
+  <%= stylesheet_link_tag "highlightjs-styles/vs.css" %>
+  <%= external_stylesheet_link_tag "jquery-ui" %>
+  <%= external_stylesheet_link_tag "diff2html" %>
+<% end %>
+
+<% content_for :javascripts do %>
+  <%= javascript_include_tag "pdf.js" %>
+  <%= external_javascript_include_tag "lodash" %>
+  <%= javascript_include_tag "highlight.pack.js" %>
+  <%= javascript_include_tag "jquery.jeditable" %>
+  <%= external_javascript_include_tag "jquery-ui" %>
+  <%= external_javascript_include_tag "scrollTo" %>
+  <%= external_javascript_include_tag "golden-layout" %>
+  <%= external_javascript_include_tag "diff2html" %>
+  <%# Hidden elements used by fillAnnotationBox in annotation.js %>
+  <div style="display: none"><%= render(partial: 'grades') %></div>
+  <div style="display: none"><%= render(partial: 'annotation_pane') %></div>
+  <script type="text/javascript">
+    <% if @cud.instructor || @cud.course_assistant then %>
+      var isInstructor = true;
+    <% else %>
+      var isInstructor = false;
+    <% end %>
+
+    const editableUrl = "<%= url_for([:quickSetScore, @course, @assessment]) %>"
+
+    var currentHeaderPos = <%= params[:header_position] || 0 %>;
+    var annotations = <%= raw @annotations.to_json %>;
+    var annotationsByPositionByLine = {};
+    var fileNameStr = "<%= @filename %>";
+    var cudEmailStr = "<%= @cud.email %>";
+
+    // a json list of problems for this assessment
+    var problems = <%= raw @problems.to_json %>;
+
+    // a json list of scores for this assessment
+    var scores = <%= raw @scores.to_json %>;
+    var basePath = "<%= course_assessment_submission_annotations_path(@course, @assessment, @submission) %>";
+
+    var localCache = {};
+
+    <% if params[:header_position] %>
+      var headerPositionStr = "<%= params[:header_position] %>";
+    <% else %>
+      var headerPositionStr = null;
+    <% end %>
+    hljs.initHighlightingOnLoad();
+    function highlightComments () {
+      // Highlights all code as a cohesive block
+      let combinedCode = '';
+      document.querySelectorAll('pre code').forEach((block) => {
+          combinedCode += block.textContent + '\n';
+      });
+      let highlightedCode = hljs.highlightAuto(combinedCode).value;
+      let htmlObject = document.createElement('div');
+      htmlObject.innerHTML = highlightedCode;
+      // Get all spans that are highlighted as comments or strings
+      let comments = htmlObject.getElementsByClassName('hljs-comment');
+      let strings = htmlObject.getElementsByClassName('hljs-string');
+      let content = [...comments, ...strings];
+      let splitContent = [];
+      // Split each span into multiple lines
+      for (let con of content) {
+          let innerSpans = con.innerText.split("\n").filter(line => line.trim() !== "");
+          innerSpans.forEach((span) => {
+              // Check if span starts with # and language is cpp or c
+              // if so we highlight it seperately and check if its a comment
+              // If it is not a comment, do not add it into the comments array
+              let highlightedSpan = hljs.highlightAuto(span);
+              if (span.startsWith("#") && (highlightedSpan.language === 'cpp' || highlightedSpan.language === 'c')) {
+                  let highlightedKeyWord = highlightedSpan.value;
+                  let htmlTestDiv = document.createElement('div');
+                  htmlTestDiv.innerHTML = highlightedKeyWord;
+                  if (htmlTestDiv.getElementsByClassName('hljs-comment').length >= 1) {
+                      splitContent.push(span);
+                  }
+              } else {
+                  splitContent.push(span);
+              }
+          });
+      }
+      // If a line of code has content that is highlighted as a comment above,
+      // we wrap the content with the hljs-comment class to highlight it
+      document.querySelectorAll('pre code').forEach((block) => {
+          if (block.textContent !== null && block.textContent !== "" && splitContent.includes(block.textContent.replace(/\n/g, ''))) {
+              let escapedText = document.createTextNode(block.textContent);
+              let codeElement = document.createElement('span');
+              codeElement.className = 'hljs-comment';
+              codeElement.appendChild(escapedText);
+              block.innerHTML = '';
+              block.appendChild(codeElement);
+          }
+      });
+    }
+    window.addEventListener('DOMContentLoaded', () => {
+        highlightComments();
+    });
+    window.navigation.addEventListener("navigate", () => {
+        highlightComments();
+    });
+    PDFJS.workerSrc = "<%= asset_url 'pdf.worker.js' %>";
+  </script>
+  <%= render partial: "golden-layout" %>
+<% end %>
+<!-- force end the container -->
+</div></div>
+
+<!-- Header to navigate between student submissions for instructors -->
+<% if @cud.instructor || @cud.course_assistant then %>
+  <div class="row">
+    <div class="col s2 center-align">
+      <% if @prevSubmission != nil %>
+        <%= link_to(view_course_assessment_submission_path(@course, @assessment, @prevSubmission), class: "valign-wrapper", title: "Previous student (shortcut: ←)", id: "prev_submission_link") do %>
+          <i class="material-icons" style="margin-right: 3px">arrow_back</i> <%= @prevSubmission.course_user_datum.user.email %>
+        <% end %>
+      <% end %>
+    </div>
+    <div class="col s8 center-align valign-wrapper submission-controls">
+      <span title="student # / total students">[<%= @curSubmissionIndex + 1 %>/<%= @latestSubmissions.length %>] <%= @submission.course_user_datum.email %>,</span>
+      <%= render "version_dropdown" %>
+      <%= render "version_links" %>
+      <a href="<%= download_file_url(@submission) %>" class="btn small" title="Download">Download</a>
+      <button class="btn small" onclick="resetLayout()">Reset Layout</button>
+      <%= render "release_grades" %>
+      <button id="hideAnnotations" class="btn small" onclick="hideAnnotations()">Hide Comments</button>
+      <button id="showAnnotations" style="display: none;" class="btn small" onclick="showAnnotations()">Show Comments</button>
+    </div>
+
+    <div class="col s2 center-align">
+      <% if @nextSubmission != nil %>
+        <%= link_to(view_course_assessment_submission_path(@course, @assessment, @nextSubmission), class: "valign-wrapper", title: "Next student (shortcut: →)", id: "next_submission_link") do %>
+          <%= @nextSubmission.course_user_datum.user.email %> <i class="material-icons" style="margin-left: 3px">arrow_forward</i>
+        <% end %>
+        <link rel="prerender" href="<%= view_course_assessment_submission_path(@course, @assessment, @nextSubmission) %>">
+      <% end %>
+    </div>
+  </div>
+<% else %>
+  <div class="row">
+    <div class="col s12 center-align valign-wrapper">
+      <button class="btn small" onclick="resetLayout()">Reset Layout</button>
+      <button id="hideAnnotations" class="btn small" onclick="hideAnnotations()">Hide Comments</button>
+      <button id="showAnnotations" style="display: none;" class="btn small" onclick="showAnnotations()">Show Comments</button>
+    </div>
+  </div>
+
+<% end %>
+
+<div class="row" id="speedgrader">
+</div>
+
+<%= render "annotation" %>
+<%= render "annotation_global" %>
+
+<!-- restart the container -->
+<div>
+<div>

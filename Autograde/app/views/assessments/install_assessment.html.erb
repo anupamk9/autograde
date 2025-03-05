@@ -1,0 +1,52 @@
+<% @title = "Install Assessment" %>
+
+Choose one of the following methods to install an assessment
+<div class="section">
+  <h4>1. Create from scratch</h4>
+  <p>
+    Create a new assessment from scratch using our Assessment Builder.
+  </p>
+  <div>
+    <%= link_to "Create New Assessment", new_course_assessment_path, class: "btn" %>
+  </div>
+</div>
+
+<div class="section">
+  <h4>2. Import from file system</h4>
+  <p>
+    Import an existing Autolab assessment from a previous course iteration.
+  </p>
+  <ul>
+    <li>
+        <strong>Step 1</strong>: Copy the assessment from the previous course directory to the current course directory
+        (<%= @course.directory_path %>).
+    </li>
+    <li>
+      <strong>Step 2</strong>: Refresh this page to cause your new assessment to appear in the list below.
+    </li>
+    <li>
+      <strong>Step 3</strong>: Click the link on the uninstalled assessment you want to import.
+    </li>
+    <% if @unused_config_files.empty? %>
+      <li>
+        <em>
+          There are no uninstalled assessments available for importing.
+        </em>
+      </li>
+    <% else %>
+      <%= render "install_assessment_table", asmt_names: @unused_config_files, course: @course %>
+    <% end %>
+  </ul>
+</div>
+
+<div class="section">
+  <h4>3. Import from tarball</h4>
+  <p>
+    Import an Autolab assessment from a tarball. Uploading an assessment tarball with the same name as an
+    existing assessment will overwrite course files except for the YAML, config file, log file, and handin directory.
+  </p>
+  <%= form_with url: { action: :import_asmt_from_tar }, builder: FormBuilderWithDateTimeInput do |f| %>
+    <%= f.file_field :tarFile, name: "tarFile", button_text: "Choose Tarball" %>
+    <%= f.submit "Import Tarball" %>
+  <% end %>
+</div>

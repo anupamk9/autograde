@@ -1,0 +1,666 @@
+jQuery(function() {
+    start = new Date();
+
+    var TAB_KEY = 9;
+    var ENTER_KEY = 13;
+
+    var current_editor = undefined;
+    var current_popover = undefined;
+
+    var num_cols = hclasses.length;
+
+    numeric_columns = []
+    for (var i = first_problem_column; i < num_cols; i++)
+        numeric_columns.push(i);
+
+    non_searchable_columns = []
+    for (var i = first_non_searchable_column; i < num_cols; i++)
+      non_searchable_columns.push(i);
+
+    jQuery.ajaxSetup({
+      headers: {
+          'X-CSRF-Token' : $('meta[name="csrf-token"]').attr('content')
+      },
+    });
+
+    // fast numeric-html sorts, NaN treated as negative infinity
+    jQuery.extend(jQuery.fn.dataTableExt.oSort, {
+      "num-html-pre": function (a) {
+        var num = parseFloat(String(a).replace(/<[\s\S]*?>/g, ""));
+        return isNaN(num) ? Number.NEGATIVE_INFINITY : num
+      },
+   
+      "num-html-asc": function ( a, b ) {
+        return ((a < b) ? -1 : ((a > b) ? 1 : 0));
+      },
+   
+      "num-html-desc": function ( a, b ) {
+        return ((a > b) ? -1 : ((a < b) ? 1 : 0));
+      }
+    });
+
+    // from http://www.datatables.net/plug-ins/api. ugly, but for now...
+    jQuery.fn.dataTableExt.oApi.fnSetFilteringDelay = function ( oSettings, iDelay ) {
+        var _that = this;
+     
+        if ( iDelay === undefined ) {
+            iDelay = 250;
+        }
+          
+        this.each( function ( i ) {
+            jQuery.fn.dataTableExt.iApiIndex = i;
+            var
+                $this = this,
+                oTimerId = null,
+                sPreviousSearch = null,
+                anControl = jQuery( 'input', _that.fnSettings().aanFeatures.f );
+              
+                anControl.unbind( 'keyup' ).bind( 'keyup', function() {
+                var $$this = $this;
+      
+                if (sPreviousSearch === null || sPreviousSearch != anControl.val()) {
+                    window.clearTimeout(oTimerId);
+                    sPreviousSearch = anControl.val(); 
+                    oTimerId = window.setTimeout(function() {
+                        jQuery.fn.dataTableExt.iApiIndex = i;
+                        _that.fnFilter( anControl.val() );
+                    }, iDelay);
+                }
+            });
+              
+            return this;
+        } );
+        return this;
+    };
+
+    // add necessary classes and data to rows after creation but before rendering
+    function completeRow(row, data, index) {
+      var submission = aux_data[index];
+      row.className = submission?.r_class;
+
+      // set up name & email column
+      $td_name = $('.id', row);
+      $td_name.attr('data-submission-id', submission['submission-id']);
+      $name_col = $col_name_template.clone();
+      $email_tag = $('.email', $name_col);
+      $email_tag.html(submission['email']);
+      if ('file' in submission) {
+        jQuery(submission['file']).insertAfter($email_tag);
+      }
+      $name_col.children().appendTo($td_name);
+
+      if (submission['submission-id'] == null) return;
+      // set up problem columns
+      $problems = jQuery('.problem',row);
+      for (var i = 0; i < $problems.length; i++) {
+        var prob_data = submission['problems'][i];
+
+        $prob_col = $col_prob_template.clone();
+        jQuery('.editable',$prob_col).html(prob_data['score']);
+
+        $td_prob = $($problems[i]);
+        if (prob_data['released']) {
+          $td_prob.addClass('released');
+          jQuery('.released',$prob_col).prop('checked',true);
+        }
+        $td_prob.addClass('edit');
+
+        if ('score-id' in prob_data) {
+          $td_prob.attr('data-score-id', prob_data['score-id']);
+        }
+        $td_prob.attr('data-submission-id', submission['submission-id']);
+        $td_prob.attr('data-problem-id', prob_data['problem-id']);
+
+        $prob_col.children().appendTo($td_prob);
+      }
+    }
+    
+    // main score table
+    var oTable = jQuery("#grades").dataTable({
+        'data' : table_data,
+        'sDom' : '<"tools"f>t', // '<"tools"fC>t', for individual problem column hide/show
+        'bInfo': false,
+        'bPaginate': true,
+        'oLanguage': { "sSearch": "" },
+        'iTabIndex': -1,
+        'iDisplayLength': rows_on_display,
+        'iDisplayStart': 0,
+        'deferRender': true,
+        'aoColumnDefs': [
+          { "bSortable": false, "aTargets": [ 0 ] },
+          { "bSearchable": false, "aTargets": non_searchable_columns },
+          { "sType": "html", "aTargets": [ email_col,lec_sec_col ] },
+          { "sType": "num-html", "aTargets": numeric_columns }, 
+        ],
+        'columns' : columns,
+        'createdRow' : completeRow,
+        'fnDrawCallback': function(oSettings) {
+          var that = this;
+          // Need to redo the counters if filtered or sorted
+          if (oSettings.bSorted || oSettings.bFiltered) {
+            asap(function() {
+              that.$('td:first-child', { "filter": "applied" }).each(function(i) {
+                  that.fnUpdate(i + 1, this.parentNode, 0, false, false);
+              });
+            });
+          }
+        },
+        "aaSorting": [[ email_col, 'asc' ],[lec_sec_col, 'asc']]
+    }).fnSetFilteringDelay();
+
+    // add sorting icons to table headings
+    function add_icons(selector) {
+      let icons = $icon_template.clone();
+      icons.appendTo(selector);
+    }
+    add_icons('th.id');
+    add_icons('th.course_number');
+    add_icons('th.lec-sec');
+    add_icons('th.actions');
+    add_icons('th.problem');
+    add_icons('th.late_penalty');
+    add_icons('th.total');
+    add_icons('th.tweak');
+
+    // dynamically change # of rows to display
+    function incrementDisplayLength(n) {
+      console.log('rendering ' + n + ' more rows');
+      rows_on_display += n;
+      oTable.fnSettings()._iDisplayLength = rows_on_display;
+      oTable.fnDraw(false);
+    }
+
+    function loadMoreRows() {
+      if (rows_on_display + increment_rows_by >= total_rows) {
+        incrementDisplayLength(total_rows - rows_on_display);
+        // unbind the event handler
+        $(window).unbind('scroll');
+        return;
+      }
+      incrementDisplayLength(increment_rows_by);
+    }
+
+    $(window).on('scroll', function() {
+      // check if the user has scrolled to near the bottom, if so, add more rows.
+      if($(window).scrollTop() + $(window).height() > $(document).height() - 150) {
+        loadMoreRows();
+      }
+    })
+
+    // placeholder text in Search field
+    jQuery("#grades_filter input").attr("placeholder", "Search");
+
+
+    // get enclosing editor from inside of it
+    function get_enclosing_editor(el) {
+        return jQuery(el).closest('td.edit');
+    }
+
+    // for another day: make score red on save error: tombug#51
+    /*function score_dirty(editor, status) {
+        if (status == "success") {
+            jQuery(editor).removeClass("error");
+        } else if (status == "error") {
+            jQuery(editor).addClass("error");
+        } else {
+           throw "score_dirty: come on, bro.";
+        }
+    }*/
+
+    /* If objOrSel is:
+     *  - selector with context, it is resolved into a jQuery object
+     *  - a jQuery object, it is returned as is
+     *
+     * The results are undefined if it's neither.
+     *
+     * @param objOrSel jQuery object or { 'selector': s, 'selector_context': c }
+     *
+     * @return jQuery object
+     */
+    function normalizeToObject(objOrSel) {
+        return (objOrSel instanceof jQuery) ? objOrSel : jQuery(objOrSel['selector'], objOrSel['selector_context']);
+    }
+
+    /* Tabs to next (previous, if reverse is true) tab object if it's visible.
+     * If it isn't, tab to *its* next/previous tab object.
+     * 
+     * If the target is an array, it tabs to the first visible element.
+     *
+     * @param from      The object to tab from
+     * @param reverse   Whether to tab in reverse (as a result of shift being held down)
+     *
+     * @return nothing
+     */
+    function tabber(from, reverse) { from = jQuery(from);
+
+        // guaranteed to be jQuery objects
+        var tabNext = normalizeToObject(from.data('tabNext'));
+        var tabPrev = normalizeToObject(from.data('tabPrev'));
+
+        // choose targets based upon direction
+        var targets = reverse ? tabPrev : tabNext;
+
+        // set focus to the first visible target
+        for (var i = 0; i < targets.length; i++) { var t = jQuery(targets[i]);
+            if (t.is(':visible')) {
+                t.focus();
+                return;
+            }
+        }
+    
+        // none of the targets are visible, tab *from* the first target
+        // TODO#1: what if no one in the tab cycle is visible anymore?
+        if (targets.length > 0)
+            tabber(targets.eq(0), reverse);
+    }
+
+    // always called when editor's closed, the hub for which is current_editor.reset()
+    function _close_current_editor() {
+        $(current_editor).parent().removeClass("focus");
+        close_current_popover();
+        current_editor = null;
+    }
+
+    function close_current_editor() {
+        $(current_editor).parent().removeClass("focus");
+        var editor = get_enclosing_editor(current_editor);
+        submit_score_details(editor);
+        current_editor.reset();
+    }
+
+    // if click outside the current editor's surrounding area (the corresponding score popover, for now), close the current editor
+    function close_current_editor_on_blur(event) {
+        if (current_editor && jQuery(current_editor).closest("td.edit").find(event.target).length == 0) {
+            close_current_editor();
+        }
+    }
+
+    function close_current_popover() {
+        current_popover.hide();
+        current_popover = undefined;
+    }
+
+    function close_current_popover_on_blur(event) {
+        if (current_popover && jQuery(current_popover).closest("td").find(event.target).length == 0) {
+            close_current_popover();
+        }
+    }
+
+    /* Run f in the next runloop
+     *
+     * @param f Function to be executed
+     */
+    function asap(f) {
+        setTimeout(f, 0); 
+    }
+
+    /* opens the score editor and feedback popover for a particular score
+     *
+     * @param {element} editable The div.editable element clicked on by the user
+     */
+    function open_editor(editable) {
+        // if we're already open, we're done
+        if (current_editor == editable) return;
+
+        // if someone else is open, close them
+        else if (current_editor) {
+            current_editor.opening_another = true;
+            close_current_editor();
+        }
+
+        $editable = jQuery(editable);
+        $editable.parent().addClass("focus");
+        // lazily register editor events
+        if ($editable.data("initialized") != true) {
+          make_editable($editable);
+          asap(function() {
+            register_editor_events($editable);
+            $editable.click();
+          });
+          $editable.data("initialized", true);
+        }
+
+        open_score_popover(editable);
+        current_editor = editable;
+    }
+
+
+    function make_editable($editable) {
+      // click/enter to edit cells
+
+      /* Calls the Jquery plugin Jeditable to set up the element for in-place editing.
+       * When done editing, a request to quickSetScore (on server) is called with the 
+       * following parameters.
+       */
+      $editable.editable('quickSetScore', {
+          name: 'score',
+          event: "click",
+          placeholder: "&ndash;",
+          indicator: '<img src="<%= asset_path('spinner.gif') %>"></img>',
+          select: true, // select all text in score editor on click/enter
+          onblur: function() {
+          },
+          onreset: function(event) {
+              _close_current_editor();
+          },
+          onerror: function() {
+              jQuery(current_editor).effect('highlight', { color: 'red' }, 400);
+              close_current_editor();
+          },
+          onsubmit: function() {
+              // also submit score details
+              var editor = get_enclosing_editor(this);
+              submit_score_details(editor);
+
+              // check if score changed (submit to server only if diff from cache)
+              var sub_id = editor.data("submission-id");
+              var prob_id = editor.data("problem-id");
+
+              var old_score = cache_get_item(sub_id, prob_id, 'score');
+              var curr_score = $('input',this).val();
+              if (curr_score != old_score) {
+                // update cache
+                cache_insert(sub_id, prob_id, 'score', curr_score);
+                console.log("submitting changes to score");
+                return true;
+              }
+              close_current_editor();
+              return false;
+          },
+          submitdata: function(value, settings) {
+              return {
+                  submission_id: get_enclosing_editor(this).data("submission-id"),
+                  problem_id: get_enclosing_editor(this).data("problem-id")
+              }
+          },
+          /* This function is called after the feedback form has been submitted. 
+           * Updates the total score (last column) for this student. */
+          callback: function(value, settings) {
+              var editor = get_enclosing_editor(this);
+              var total = editor.siblings(".total");
+        
+              jQuery.ajax("quickGetTotal", {
+                  data: {
+                      submission_id: editor.data('submission-id')
+                  }, 
+                  success: function(data, status, jqXHR) {
+                      // TODO: wtf
+                      total.html(data == " " ? "&ndash;" : data);
+                      total.effect("highlight", {}, 1000);
+                  },
+                  error: function() {
+                      total.text("?");
+                  }
+              });
+              _close_current_editor();
+          }
+
+      });
+
+    }
+
+    function register_editor_events($editable) {
+      var editor = get_enclosing_editor($editable);
+      
+      $editable.data('tabNext', jQuery('textarea.feedback', editor));
+      $editable.data('tabPrev', jQuery('.save_box .save, .save_box .error', editor));
+
+      jQuery("input", $editable).on('keydown', function(event) {
+          if (event.keyCode == TAB_KEY) {
+              event.preventDefault();
+              tabber(jQuery(this).closest('div.editable'), event.shiftKey);
+          }
+      });
+
+      var feedback = jQuery("textarea.feedback", editor) 
+      feedback.data('tabNext', jQuery('.save_box .save, .save_box .error', editor));
+      feedback.data('tabPrev', { selector: "div.editable input", selector_context: editor });
+
+      feedback.keydown(function(event) {
+          if (event.keyCode == TAB_KEY) {
+              event.preventDefault();
+              tabber(this, event.shiftKey);
+          }
+      });
+
+      var save_error = jQuery('.save_box .save, .save_box .error', editor);
+      save_error.data('tabPrev', jQuery('textarea.feedback', editor));
+      save_error.data('tabNext', { selector: "div.editable input", selector_context: editor });
+
+      save_error.keydown(function(event) {
+          if (event.keyCode == TAB_KEY) {
+              event.preventDefault();
+              tabber(this, event.shiftKey);
+          } else if (event.keyCode == ENTER_KEY) {
+              submit_score_details(get_enclosing_editor(this));
+          }
+      });
+
+      save_error.click(function(event) {
+          jQuery('div.editable form', get_enclosing_editor(this)).submit();
+      });
+
+      jQuery('.score_details input.released', editor).data('changed', false);
+    }
+
+    /* submit feedback, released-state, (and implicitly, the grader) to server, but only
+     * if feedback or released-state has changed. */
+    function submit_score_details(editor, not_score) {
+        var sub_id = editor.data("submission-id");
+        var prob_id = editor.data("problem-id");
+
+        var old_feedback = cache_get_item(sub_id, prob_id, 'feedback');
+        var curr_feedback = jQuery('.score_details textarea.feedback', editor).val();
+
+        var released_changed = jQuery('.score_details input.released', editor).data('changed');
+
+        if (released_changed || old_feedback != curr_feedback) {
+          console.log('submitting changes to feedback/released-state');
+
+          // reset released-state changed flag
+          jQuery('.score_details input.released', editor).data('changed', false);
+
+          var released = jQuery('.score_details input.released', editor).is(':checked');
+          jQuery.ajax("quickSetScoreDetails", {
+              type: 'POST',
+              data: {
+                  submission_id: sub_id,
+                  problem_id: prob_id,
+                  feedback: curr_feedback,
+                  released: released,
+                  score: jQuery(".editable input", editor).val()  // currently unused -- tombug#50
+              },
+              success: function(data, status, jqXHR) {
+                  // update cache
+                  cache_insert(sub_id, prob_id, 'feedback', curr_feedback);
+          
+                  // update score id
+                  editor.data('score-id', data)
+
+                  // code to update released score formatting
+                  if (released) {
+                      jQuery(editor).addClass("released");
+                  } else {
+                      jQuery(editor).removeClass("released");
+                  }
+                  score_details_dirty(editor, "saved");
+              },
+              error: function() {
+                  score_details_dirty(editor, "error");
+              }
+          });
+        }
+        score_details_dirty(editor, "saving");
+    }
+
+    jQuery("#grades").on('click', 'div.editable', function(event) {
+        open_editor(this);
+    });
+
+    jQuery("#grades").on('change', 'div.popover .score_details input.released', function(event) {
+        $(event.target).data('changed', !$(event.target).data('changed'));
+    });
+
+
+    jQuery("#grades_filter input").keydown(function(event){
+            if (event.keyCode === 13) { // return
+                asap(function() { jQuery(focusser).focus(); });
+            } else if (event.keyCode === 27) { // esc
+                event.preventDefault();
+                jQuery(this).val("");
+            }
+    });
+
+    jQuery('#grades_filter input').focus()
+
+    jQuery(document).click(function(event) {
+      close_current_editor_on_blur(event);
+      close_current_popover_on_blur(event);
+    });
+
+    // generic popover opening engine
+    function show_popover(popover, at, arrow_at) {
+      if (current_editor) close_current_editor();
+      if (current_popover) close_current_popover();
+
+      // show popover
+      popover.show();
+      popover.position(at);
+
+      // show arrow
+      var arrow = jQuery(".arrow", popover)
+        if (arrow_at) {
+          arrow.position(arrow_at);
+        } else {
+          arrow.position({
+            my: "right",
+            at: "left",
+            of: popover
+          });
+        }
+
+      // TODO: quick hack to remove awkward incorrectly directed arrow on popover flip: tombug#49
+      if (popover.position().left < at.of.position().left)
+        arrow.hide();
+
+      current_popover = popover;
+    }
+    // to show the the ID column popovers
+    jQuery('#grades').on('click', 'td.id a.email', function() {
+      jQuery('div.popover').hide();
+
+      var link = jQuery(this)
+      var popover = link.siblings("div.popover")
+
+      jQuery.ajax("submission_popover", {
+        data: { submission_id: link.parent().data("submission-id") },
+        success: function(data, status, jqXHR) {
+          popover.html(data)
+          show_popover(popover, {
+            my: "left center",
+            at: "right center",
+            of: link,
+            offset: "10px 0"
+          });
+        }
+      });
+    });
+
+    /* Open the popover for viewing/editing feedback for a particular score
+     *
+     *@param {element} e The editable element on which to show the feedback popover
+     */
+    function open_score_popover(e) {
+      var $editable = jQuery(e);
+      var $popover = $editable.siblings("div.popover");
+      var $td = $editable.parent();
+      var $score_details_tbody = jQuery(".score_details", $popover);
+      var score_id = $td.data("score-id");
+      var sub_id = $td.data('submission-id');
+      var prob_id = $td.data('problem-id');
+
+      var grader_name_field = jQuery(".grader-name", $score_details_tbody);
+      var $feedback_textarea = jQuery(".feedback", $score_details_tbody);
+
+      // check cache first
+      var cache_feedback = cache_get_item(sub_id, prob_id, 'feedback');
+      if (cache_feedback != null) {
+        // cache hit
+        $feedback_textarea.text(cache_feedback);
+      } else {
+        // cache miss
+        // lazy load grader and feedback
+        if (score_id) {
+          $feedback_textarea.prop('disabled', true);  // disable feedback editing until ajax returns
+
+          jQuery.ajax("score_grader_info", {
+            data: {
+              "score_id": score_id
+            },
+            success: function(data, status, jqXHR) {
+              try {
+                var grader = data.grader;
+                var feedback = data.feedback || "";
+                var score = data.score;
+              } catch(err) {
+                // invalid response
+                console.log("Invalid response from server: " + data);
+                console.log(err);
+                return;
+              }
+
+              // update cache
+              cache_insert(sub_id, prob_id, 'grader', grader);
+              cache_insert(sub_id, prob_id, 'feedback', feedback);
+              cache_insert(sub_id, prob_id, 'score', score);
+
+              // update interface
+              if (grader_name_field.length != 0) {
+                grader_name_field.remove();
+              }
+              if (grader != " ") {
+                $score_details_tbody.prepend("<div class='grader-name'>Grader: " + grader + "</div>")
+              }
+              $feedback_textarea.text(feedback);
+              $feedback_textarea.prop('disabled', false);
+            }
+          });
+        }
+      }
+
+      show_popover($popover, {
+        my: "left center",
+        at: "right center",
+        of: $popover.parent(),
+        offset: "5px 0"
+      });
+    }
+
+    // TODO: idempotent. made so due to bad dirtying algorithm
+    function score_details_dirty(editor, state) {
+        editor.data("score-details-state", state);
+        jQuery(".save_box *", editor).blur();
+        if (state == "dirty") {
+            jQuery(".save_box *", editor).hide();
+            jQuery(".save", editor).show();
+        } else if (state == "saving") {
+            jQuery(".save_box *", editor).hide();
+            jQuery(".save", editor).show();
+        } else if (state == "saved") {
+            jQuery(".save_box *", editor).hide();
+            jQuery(".save", editor).show();
+        } else if (state == "error") {
+            jQuery(".save_box *", editor).hide();
+            jQuery(".error", editor).show();
+            jQuery(".error", editor).focus();
+        } else {
+            throw "score_details_dirty: come on, bro";
+        } 
+    }
+    
+    var dirty = function(event) {
+        score_details_dirty(get_enclosing_editor(event.target), "dirty");
+    }
+
+
+});

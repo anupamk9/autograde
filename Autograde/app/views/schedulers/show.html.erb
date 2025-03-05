@@ -1,0 +1,29 @@
+<% @title = "Show Scheduler" %>
+
+<p>
+  <strong>Action:</strong>
+  <%= @scheduler.action %>
+</p>
+
+<p>
+  <strong>Next:</strong>
+  <%= @scheduler.next %>
+</p>
+
+<p>
+  <strong>Until:</strong>
+  <%= @scheduler.until %>
+</p>
+
+<p>
+  <strong>Interval:</strong>
+  <%= @scheduler.interval %>
+</p>
+
+<p>
+  <strong>Disabled:</strong>
+  <%= @scheduler.disabled %>
+</p>
+
+<%= link_to 'Back', course_schedulers_path(@course), { class: "btn" } %>
+<%= link_to 'Edit', edit_course_scheduler_path(@course, @scheduler), { class: "btn" } %>

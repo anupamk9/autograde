@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=0">
+    <%= csrf_meta_tag %>
+    <%= favicon_link_tag 'autolab.ico?v=3' %>
+
+    <%= stylesheet_link_tag 'application' %>
+    <!-- Flatpickr Datepicker CSS (lightweight file) -->
+    <%= external_stylesheet_link_tag "flatpickr" %>
+    <%= stylesheet_link_tag 'animate' %>
+    <%= stylesheet_link_tag 'style' %>
+
+    <% if Rails.configuration.x.analytics_id %>
+      <!-- Heap Analytics -->
+      <script type="text/javascript">
+        window.heap=window.heap||[],heap.load=function(t,e){window.heap.appid=t,window.heap.config=e;var a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=("https:"===document.location.protocol?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+t+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(t){return function(){heap.push([t].concat(Array.prototype.slice.call(arguments,0)))}},p=["clearEventProperties","identify","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+        heap.load("<%= Rails.configuration.x.analytics_id %>");
+      </script>
+    <% end %>
+
+    <% if Rails.configuration.x.google_analytics_id %>
+      <!-- Global site tag (gtag.js) - Google Analytics -->
+      <script async src="https://www.googletagmanager.com/gtag/js?id=<%= Rails.configuration.x.google_analytics_id %>"></script>
+      <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', "<%= Rails.configuration.x.google_analytics_id %>");
+      </script>
+    <% end %>
+
+    <%= content_for :head %>
+    <link href='//fonts.googleapis.com/css?family=Source+Sans+Pro:300,400' rel='stylesheet' type='text/css'>
+    <%= content_for :stylesheets %>
+    <title>
+      <%= if @title
+            @title
+          elsif @course
+            @course.display_name
+          else
+            "Autolab Home"
+          end %>
+    </title>
+
+  </head>
+
+  <body class="autolab">
+    <%= external_javascript_include_tag "jquery" %>
+    <%= external_javascript_include_tag "jquery-migrate" %>
+    <%= content_for :js_widget_patch %>
+    <%= javascript_include_tag 'application' %>
+
+    <!-- Flatpickr Datetimepicker JS (lightweight file) -->
+    <%= external_javascript_include_tag "flatpickr" %>
+
+    <div class="page-wrapper">
+      <a class="skip-main" href="#content">Skip to main content</a>
+      <%= render "layouts/navbar" %>
+
+      <!-- Page Body -->
+      <div id="pageBody" class="container">
+
+        <% if @cud&.dropped?
+             flash.now[:error] = "You seem to have dropped this course. Please email your instructor if this is incorrect."
+           end %>
+
+        <!-- Flashes -->
+        <div id="flashes">
+          <%# msg is escaped by default %>
+          <%# if you must output raw html, set flash[:html_safe] = true in controller %>
+          <% html_safe = flash[:html_safe] %>
+          <% flash.delete(:html_safe) %>
+          <% flash.each do |name, msg| %>
+            <% msg = msg.html_safe if html_safe %>
+            <%= content_tag :div, msg, id: "flash_#{name}",
+                                       class: name.to_s %>
+          <% end %>
+          <noscript>
+              <div id="flash_error" class="error">
+                  Autolab requires Javascript to be enabled for all features to correctly function. Please enable Javascript.
+              </div>
+          </noscript>
+        </div>
+        <!-- End Flashes -->
+
+        <!-- Persistent Announcements -->
+        <%= render partial: "announcements/announcements_list",
+                   locals: { announcements: @persistent_announcements } %>
+        <!-- End Persistent Announcements -->
+
+        <!-- Content -->
+        <div id="content" role="main">
+          <%= yield %>
+        </div>
+        <!-- End Content -->
+        <%= render "layouts/footer" %>
+        <!-- End Footer -->
+      </div>
+      <!-- End Page Body -->
+      <!-- Footer -->
+    </div>
+
+    <script async defer id="github-bjs" src="https://buttons.github.io/buttons.js"></script>
+    <%= content_for :javascripts %>
+
+  </body>
+</html>

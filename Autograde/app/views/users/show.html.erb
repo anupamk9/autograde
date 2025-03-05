@@ -1,0 +1,122 @@
+<% @title = @user.display_name %>
+
+<h4><%= @user.display_name %></h4>
+<ul class="gray-box">
+  <li>
+    <b>Contact</b><br>
+    <a href="mailto:<%= @user.email %>"><%= @user.email %></a>
+  </li>
+  <li> <b>About</b><br>
+    <% if @user.first_name.present? %>
+      First name: <strong><%= @user.first_name %></strong>
+    <% else %>
+      First name: (student has no first name)
+    <% end %>
+    <br>
+    <% if @user.last_name.present? %>
+      Last name: <strong><%= @user.last_name %></strong>
+    <% else %>
+      Last name: (student has no last name)
+    <% end %>
+    <br>
+  </li>
+  <li>
+    <b>
+      Courses
+    </b>
+    <% if @cuds.empty? %>
+      <strong> None </strong>
+    <% else %>
+      <ul>
+        <% @cuds.each do |cud| %>
+          <li><%= link_to cud.course.display_name, edit_course_course_user_datum_path(cud.course, cud) %>
+          </li>
+        <% end %>
+      </ul>
+    <% end %>
+  </li>
+</ul>
+<%= link_to edit_user_path(@user) do %>
+  <span class="btn primary">
+    Edit Information
+  </span>
+<% end %>
+<% if current_user.administrator? && @user.id != current_user.id %>
+  <%= link_to user_path(@user), method: :delete, data: { confirm: "Are you sure!?" } do %>
+    <span class="btn">
+      Delete User
+    </span>
+  <% end %>
+<% end %>
+<% if current_user.administrator? %>
+  <%= link_to change_password_for_user_user_path(@user), method: :post do %>
+    <span class="btn">
+      Change User's Password
+    </span>
+  <% end %>
+<% end %>
+<% if @user == current_user %>
+  <hr>
+  <h4>Private Settings</h4>
+  <%= link_to edit_user_registration_path do %>
+    <span class="btn primary">
+      Change Password
+    </span>
+  <% end %>
+  <% if GithubIntegration.connected %>
+    <% if @user.github_integration && @user.github_integration.is_connected %>
+      <%= link_to github_revoke_user_path(@user), data: { method: "post" } do %>
+        <span class="btn primary">
+          Revoke Github Token
+        </span>
+      <% end %>
+    <% else %>
+      <%= link_to github_oauth_user_path(@user) do %>
+        <span class="btn primary">
+          Connect to Github
+        </span>
+      <% end %>
+    <% end %>
+  <% end %>
+  <h4>API Settings</h4>
+  <%= link_to device_flow_activation_path do %>
+    <span class="btn primary">
+      New Activation
+    </span>
+  <% end %>
+  <%= link_to oauth_authorized_applications_path do %>
+    <span class="btn primary">
+      Managed Authorized Clients
+    </span>
+  <% end %>
+  <h4>Display Settings</h4>
+  <%= form_for @user, url: update_display_settings_user_path(@user) do |f| %>
+    <ul class="gray-box">
+      <li>
+        Hover to show assessment dates on course page
+        <div class="switch" style="float: right;">
+          <label>
+            <%= f.check_box :hover_assessment_date, default: false %>
+            <span class="lever" style="vertical-align: center; margin-bottom:0.5rem;"></span>
+          </label>
+        </div><br>
+      </li>
+    </ul>
+    <%= f.submit 'Save', { class: "btn primary" } %>
+  <% end %>
+  <h4>Download Submissions</h4>
+  <%= link_to download_all_submissions_user_path(@user, final: true),
+              { title: "Download all your final submissions",
+                class: "" } do %>
+    <span class="btn primary">
+      Download Final
+    </span>
+  <% end %>
+  <%= link_to download_all_submissions_user_path(@user),
+              { title: "Download all your submissions",
+                class: "" } do %>
+    <span class="btn primary">
+      Download All
+    </span>
+  <% end %>
+<% end %>

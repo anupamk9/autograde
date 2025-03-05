@@ -1,0 +1,245 @@
+// Place all the styles related to the metrics controller here.
+// They will automatically be included in application.css.
+// You can use Sass (SCSS) here: https://sass-lang.com/
+@import "semantic-ui";
+@import 'variables';
+
+/* reset changes by semantic-ui (Line 8-24) */
+@media only screen and (min-width: 0) {
+  html {
+    font-size: 14px;
+  }
+}
+
+@media only screen and (min-width: 992px) {
+  html {
+    font-size: 14.5px;
+  }
+}
+
+@media only screen and (min-width: 1200px) {
+  html {
+    font-size: 15px;
+  }
+}
+
+.button.submit {
+  color: #FFFFFF !important;
+  background-color: $autolab-red !important;
+}
+
+.button.submit:hover {
+  color: #FFFFFF !important;
+  background-color: $autolab-subtle-red !important;
+}
+
+.icon.button {
+  color: #FFFFFF !important;
+  background-color: #5d5d5d !important;
+}
+
+.icon.button:hover{
+  color: #FFFFFF !important;
+  background-color: #919191 !important;
+}
+
+.dropdown {
+  min-width: 20px !important;
+}
+
+.select_all {
+  margin-top: 2px;
+  margin-right: -5px;
+}
+
+.select-all-chip{
+  margin-right: 0.5rem;
+}
+
+span.padded-span:before {
+  content:" ";
+  display:inline-block;
+  width:10px;
+}
+
+span.padded-span:after {
+  content:" ";
+  display:inline-block;
+  width:10px;
+}
+
+.checkbox label::after {
+  border:none;
+  transform:none;
+}
+
+.ui.checkbox .box, .ui.checkbox label {
+  border-top-width:2px;
+  border-left-width:2px;
+  border-bottom-width:2px;
+  border-right-width:2px;
+}
+
+div.metric {
+  font-size:16px;
+  border:none;
+  transform:none;
+}
+
+input[type="text"] {
+  height: 20px !important;
+  width: 30px !important;
+}
+
+.success {
+  color: black;
+}
+
+.error {
+  color: black;
+}
+
+.ui.form input[type="text"] {
+  vertical-align: baseline;
+}
+
+.ui.form .inline.fields .field .calendar:not(.popup), .ui.form .inline.field .calendar:not(.popup) {
+  display: inline-flex;
+}
+
+.ui.form .inline.fields .field:not(.wide) .ui.input, .ui.form .inline.field:not(.wide) .ui.input {
+  min-width: 200px !important;
+}
+
+.ui.pointing.label:before {
+  z-index: 0 !important;
+  width: 0 !important;
+  height: 0 !important;
+}
+
+.ui.tab.segments {
+  margin-bottom: 0em;
+  margin-top: 0em;
+}
+
+.top-bar {
+  padding-left: 21%;
+  display: flex;
+  align-items: center;
+}
+
+.last-updated{
+  margin-top: 15px;
+  margin-left: auto;
+}
+
+.students-buttons-right{
+  display: initial;
+  margin-left: auto;
+}
+
+#undefined_metrics{
+  background: rgba(243, 240, 240, 0.9);
+  padding: 10px;
+  display: none;
+}
+
+#empty_tabs{
+  background: rgba(243, 240, 240, 0.9);
+  padding: 10px;
+}
+
+i.external.alternate {
+  margin-left: 5px;
+  margin-right: 10px;
+  color: black !important;
+}
+
+// for resizing window
+.wide.column {
+  min-width: max-content;
+}
+
+.name_label {
+  font-size: 14px;
+  font-weight: 400;
+}
+.email_label {
+  color: grey;
+  font-size: 10px;
+  margin-top: -15px;
+}
+
+.select_single label {
+  // color, font-weight needed here for non checkbox label
+  color: black;
+  font-weight: 300;
+  display: inline-block !important;
+  vertical-align: middle !important;
+  -webkit-touch-callout: default !important; /* iOS Safari */
+  -webkit-user-select: auto !important; /* Safari */
+  -khtml-user-select: default !important; /* Konqueror HTML */
+  -moz-user-select: auto !important; /* Firefox */
+  -ms-user-select: auto !important; /* Internet Explorer/Edge */
+  user-select: auto !important; /* Non-prefixed version, currently
+                                supported by Chrome and Opera */
+}
+// override materialize style for checkbox label
+.select_single [type="checkbox"] + label {
+  color: black;
+  font-weight: 300;
+}
+.ui.checkbox.select_single label:before,
+.ui.checkbox.select_single label:after {
+  top: 6.5px;
+}
+// override weight for watchlist label
+.segment .label {
+  font-weight: 400;
+}
+.ui.search .ui.input {
+  width: 230px;
+  float: right;
+  margin-top: -9px;
+}
+
+.ui.input > input {
+  padding: 0.5rem;
+  padding-left: 15px;
+}
+
+.ui.secondary.segment h5 {
+  margin-top: 0;
+}
+
+.ui.search > .results {
+  top: 30px;
+}
+
+span.instances:before {
+  width: 0;
+  display: inline;
+}
+
+span.instances:after {
+  width: 0;
+  display: inline;
+}
+
+span.instances .segment {
+  margin: 0;
+  border-radius: 0;
+  border: none;
+  border-top: 1px solid rgba(34,36,38,0.15);
+  display: flex;
+  align-items: center;
+}
+
+.select-all-chip {
+  display: flex;
+  align-items: center;
+}
+
+a:hover {
+  color: $autolab-white;
+}

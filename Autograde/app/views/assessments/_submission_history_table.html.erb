@@ -1,0 +1,52 @@
+<div class="submissions">
+  <table class="highlight sub" border=1>
+
+    <thead>
+      <tr>
+        <th>Ver</th>
+        <th>File</th>
+        <th>Submission Date</th>
+
+        <% for problem in @problems do %>
+          <th title="Max <%= problem.max_score %> points">
+            <%= problem.name %><br>
+            (<%= problem.max_score || raw('&ndash;') %>)
+          </th>
+        <% end %>
+
+        <% if @course.grace_days >= 0 %>
+          <th>Days Late<br>(Grace Days Used)</th>
+        <% end %>
+
+        <% if @assessment.version_penalty? %>
+          <th>Version Penalty (Over Threshold By)</th>
+        <% end %>
+
+        <th title="Max <%= @assessment.max_score %> points">
+          Total Score<br>
+          (<%= @assessment.max_score || raw('&ndash;') %>)
+        </th>
+
+        <% if @cud.instructor? %>
+          <th>Tweak</th>
+          <th>Instructor Actions</th>
+        <% end %>
+
+      </tr>
+    </thead>
+
+    <tbody>
+      <% if @submissions.size == 0 then %>
+        <tr><td colspan="400">No Submissions yet!</td></tr><!-- Sure! -->
+      <% else %>
+        <% if limit.nil? then limit = @submissions.size end %>
+        <% for submission in @submissions.first(limit) do %>
+          <%= render partial: "submission_history_row",
+                     locals: { submission:,
+                               download_access: } %>
+        <% end %>
+      <% end %>
+    </tbody>
+
+  </table>
+</div>

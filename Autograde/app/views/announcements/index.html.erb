@@ -1,0 +1,15 @@
+<% @title = "Manage Announcements" %>
+
+<h4>Current Announcements</h4>
+<ul class="gray-box">
+  <% if !@announcements.nil? && @announcements.length > 0 %>
+    <%= render @announcements %>
+  <% else %>
+    There are no existing announcements.
+  <% end %>
+</ul>
+<%= link_to new_course_announcement_path(@course) do %>
+  <span class="btn small">
+    Create Announcement
+  </span>
+<% end %>

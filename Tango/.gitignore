@@ -1,0 +1,29 @@
+# exclude all binaries
+*.pyc
+# exclude all test job outputs
+*.out
+# exclude helper scripts
+scripts/*.sh
+# exclude
+vmms/id_rsa*
+courselabs/*
+dockerTmp/*
+# config
+config.py
+
+# Virtualenv
+.Python
+bin
+lib
+include
+pip-selfcheck.json
+
+# Mac OS X custom attribute files
+.DS_Store
+
+# IDEs
+.idea
+.vscode
+
+# Backup files
+*.bak

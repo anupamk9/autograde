@@ -1,0 +1,24 @@
+<% @title = "Edit Account Details" %>
+
+<h4>Editing Account Details for <%= @user.email %></h4>
+<%= form_for @user, url: user_path(@user), builder: FormBuilderWithDateTimeInput do |f| %>
+
+<% if @user.errors.any? %>
+  <div id="error_explanation">
+    <h2><%= pluralize(@user.errors.count, "error") %>
+      prohibited this user from being saved:</h2>
+
+    <ul>
+      <% @user.errors.full_messages.each do |msg| %>
+      <li><%= msg %></li>
+      <% end %>
+    </ul>
+  </div>
+<% end %>
+
+  <br>
+
+  <%= render partial: "fields", locals: { f: } %>
+
+  <%= f.submit 'Save Changes', { class: "btn primary" } %>
+<% end %>

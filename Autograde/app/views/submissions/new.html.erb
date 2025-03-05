@@ -1,0 +1,59 @@
+<% @title = "Create New Submission" %>
+
+<h4>Create Submission for <%= link_to @assessment.display_name, course_assessment_path(@course, @assessment) %></h4>
+
+<%= form_for @submission, as: :submission,
+                          url: course_assessment_submissions_path(@course, @assessment), method: :post,
+                          builder: FormBuilderWithDateTimeInput,
+                          html: { multipart: true } do |f| %>
+
+<table class="verticalTable">
+<tr>
+  <th>User:</th>
+  <td>
+  <% if params[:course_user_datum_id].nil? then %>
+
+  <% content_for :javascripts do %>
+    <%= render partial: "components/autocomplete", locals: { hiddenCUDField: "#submission_course_user_datum_id" } %>
+  <% end %>
+
+  <div class="input-field">
+    <input type="text" size="3" id="student_autocomplete" class="autocomplete" autocomplete="off">
+    <label for="student_autocomplete">Start typing student name or email</label>
+  </div>
+  <%= f.hidden_field(:course_user_datum_id) %>
+
+  <% else %>
+    <%= @cuds.collect(&:email).join(", ") %>
+    <input type='hidden' name='submission[course_user_datum_id]' value='<%= @cuds.collect(&:id).join(',') %>'>
+  <% end %>
+  </td>
+</tr>
+<tr>
+  <th>Assessment:</th><td><%= @assessment.display_name %></td>
+  <%= f.hidden_field(:assessment_id) %>
+</tr>
+<tr>
+  <th>File:</th><td><%= f.file_field :file %></td>
+</tr>
+<tr>
+  <th>Notes:</th><td><%= f.text_area :notes, class: 'materialize-textarea', placeholder: "Notes on submission" %></td>
+</tr>
+<tr>
+  <th>Tweak:</th>
+  <td>
+  <%= f.fields_for :tweak, @submission.tweak do |t| %>
+    <%= t.text_field :value, placeholder: "Number of points or percentage" %>
+    <%= t.select :kind, options_for_select({ "points" => "points", "%" => "percent" },
+                                           selected: (@submission.tweak ? @submission.tweak.kind : "points")) %>
+  <% end %>
+  </td>
+</tr>
+<tr>
+  <td colspan=2>
+  <br>
+  <%= f.submit "Create Submission", { class: "btn primary" } %>
+  </td>
+</tr>
+</table>
+<% end %>

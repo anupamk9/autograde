@@ -1,0 +1,50 @@
+<% @title = "Manage Schedulers" %>
+
+<h4>Manage Schedulers</h4>
+<p>It is currently <span class="moment-date-time" data-format="MMM D YYYY h:mm:ssa Z"><%= Time.zone.now %></span></p>
+
+<%= link_to 'New Scheduler', new_course_scheduler_path(@course), { class: "btn" } %>
+<table class="prettyBorder">
+  <thead>
+    <tr>
+      <th>Action</th>
+      <th>Next</th>
+      <th>Until</th>
+      <th>Status</th>
+      <th>Interval (s)</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+  <% if @schedulers.empty? %>
+    <tr>
+      <td colspan="6">There are currently no schedulers for this course</td>
+    </tr>
+  <% else %>
+    <% @schedulers.each do |scheduler| %>
+      <tr>
+        <td><%= scheduler.action %></td>
+        <td><span class="moment-date-time" data-format="MMM D YYYY h:mm:ssa Z"><%= scheduler.next %></span></td>
+        <td><span class="moment-date-time" data-format="MMM D YYYY h:mm:ssa Z"><%= scheduler.until %></span></td>
+        <td><%= scheduler.status %></td>
+        <td><%= scheduler.interval %></td>
+        <td>
+          <%= link_to "<i class='material-icons'>info</i>".html_safe, course_scheduler_path(@course, scheduler),
+                      { title: "View scheduler details", class: "btn" } %>
+          <%= link_to "<i class='material-icons'>edit</i>".html_safe, edit_course_scheduler_path(@course, scheduler),
+                      { title: "Edit this scheduler", class: "btn" } %>
+          <%= link_to "<i class='material-icons'>play_circle_filled</i>".html_safe,
+                      course_scheduler_run_path(@course, scheduler),
+                      { method: "post", title: "Run this scheduler",
+                        data: { confirm: "Are you sure you want to run this scheduler?" }, class: "btn" } %>
+          <%= link_to "<i class='material-icons'>delete</i>".html_safe, course_scheduler_path(@course, scheduler),
+                      { method: "delete", title: "Delete this scheduler",
+                        data: { confirm: "Are you sure you want to delete this scheduler?" }, class: "btn" } %>
+        </td>
+      </tr>
+    <% end %>
+  <% end %>
+  </tbody>
+</table>
+
+<br>

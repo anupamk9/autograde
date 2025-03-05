@@ -1,0 +1,16 @@
+<% @title = "Create New Course" %>
+
+<div class="row">
+  <div class="col s12">
+    <ul class="tabs">
+      <li class="tab col s6"><a href="#new-course">Create New Course</a></li>
+      <li class="tab col s6"><a href="#import-course">Import Course</a></li>
+    </ul>
+  </div>
+  <div id="new-course" class="col s12">
+    <%= render partial: 'create_new_course' %>
+  </div>
+  <div id="import-course" class="col s12">
+    <%= render partial: 'import_new_course' %>
+  </div>
+</div>

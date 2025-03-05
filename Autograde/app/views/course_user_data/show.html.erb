@@ -1,0 +1,29 @@
+<% @title = @requestedUser.full_name %>
+
+<h4>
+  <%= @requestedUser.full_name %> (<%= @requestedUser.nickname %>)
+  <% if @cud.instructor? && @requestedUser.dropped? %>
+    -
+    <span class="error-header">
+      (dropped)
+    </span>
+  <% end %>
+</h4>
+<ul class="gray-box">
+  <li><b>Contact</b><br>
+    <a href="mailto:<%= @requestedUser.email %>"><%= @requestedUser.email %></a></li>
+  <li><b>About</b><br>
+    Course Name: <strong><%= @requestedUser.course.full_name %></strong><br>
+    Course &#8470;: <strong><%= @requestedUser.course_number %></strong><br>
+    Lecture: <strong><%= @requestedUser.lecture %></strong><br>
+    Section: <strong><%= @requestedUser.section %></strong><br>
+    <%= @requestedUser.school %> <%= @requestedUser.major %>, Class of <%= @requestedUser.year %></li>
+  <% if @cud.instructor? %>
+    <li><b>Course Average Tweak</b> of <%= raw tweak(@requestedUser.tweak) %>
+    <% if @requestedUser.dropped? %>
+      <br> <b> This user has been dropped from the current course. </b>
+    <% end %>
+    </li>
+  <% end %>
+</ul>
+<%= link_to raw('<span class="btn primary">Edit Information</span>'), edit_course_course_user_datum_path(@course, @requestedUser) %>

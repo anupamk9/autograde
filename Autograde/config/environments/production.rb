@@ -1,0 +1,154 @@
+Autolab3::Application.configure do
+  # Settings specified here will take precedence over those in config/application.rb
+
+  # Code is not reloaded between requests
+  config.cache_classes = true
+
+  config.eager_load = true
+
+  # Full error reports are disabled and caching is turned on
+  config.consider_all_requests_local       = false
+  config.action_controller.perform_caching = true
+
+  # Disable Rails's static asset server (Apache or nginx will already do this)
+  config.serve_static_files = false
+
+  config.assets.enabled = true
+  # Compress JavaScripts and CSS
+  config.assets.js_compressor = :terser
+  config.assets.css_compressor = :sass
+
+  # Don't fallback to assets pipeline if a precompiled asset is missed
+  config.assets.compile = false
+
+  # Generate digests for assets URLs
+  config.assets.digest = true
+
+  # Defaults to nil and saved in location specified by config.assets.prefix
+  # config.assets.manifest = YOUR_PATH
+
+  # Specifies the header that your server uses for sending files
+  # config.action_dispatch.x_sendfile_header = "X-Sendfile" # for apache
+  # config.action_dispatch.x_sendfile_header = 'X-Accel-Redirect' # for nginx
+
+  # Force all access to the app over SSL, use Strict-Transport-Security, and use secure cookies.
+  # Default to true, unless false explicitly specified in DOCKER_SSL env var
+  if ENV["DOCKER_SSL"] == "false"
+    config.force_ssl = false
+  else
+    config.force_ssl = true
+    config.middleware.use Rack::SslEnforcer, :except => [ /log_submit/, /local_submit/ ]
+  end
+  
+  # See everything in the log (default is :info)
+  config.log_level = :info
+
+  # Prepend all log lines with the following tags
+  # config.log_tags = [ :subdomain, :uuid ]
+
+  # Use a different logger for distributed setups
+  # config.logger = ActiveSupport::TaggedLogging.new(SyslogLogger.new)
+
+  # Use a different cache store in production
+  # config.cache_store = :mem_cache_store
+
+  # Enable serving of images, stylesheets, and JavaScripts from an asset server
+  # config.action_controller.asset_host = "http://assets.example.com"
+
+  # Store uploaded files on the local file system (see config/storage.yml for options).
+  config.active_storage.service = :local
+
+  # Disable delivery errors, bad email addresses will be ignored
+  # config.action_mailer.raise_delivery_errors = false
+
+  # Enable threaded mode
+  # config.threadsafe!
+
+  # Enable locale fallbacks for I18n (makes lookups for any locale fall back to
+  # the I18n.default_locale when a translation can not be found)
+  config.i18n.fallbacks = [I18n.default_locale]
+
+  # Send deprecation notices to registered listeners
+  config.active_support.deprecation = :notify
+
+  # Log the query plan for queries taking more than this (works
+  # with SQLite, MySQL, and PostgreSQL)
+  # config.active_record.auto_explain_threshold_in_seconds = 0.5
+
+  # option for using sendmail
+  # config.action_mailer.delivery_method = :sendmail
+
+  config.middleware.use ExceptionNotification::Rack,
+    email: {
+      email_prefix: "[Autolab Error] ",
+      sender_address: "\"NOTIFIER\" <NOTIFICATIONS@YOURAPP.com>",
+      exception_recipients: "TEAM@YOURAPP.COM"
+    }
+
+  # Feature flag for docker image upload
+  config.x.docker_image_upload_enabled = false
+
+  # ID for Heap Analytics
+  config.x.analytics_id = nil
+
+  # ID for Google Analytics
+  config.x.google_analytics_id = nil
+
+  # OAuth2 Application Configuration for Github
+  # See https://docs.autolabproject.com/installation/github_integration/
+  if File.size?("#{Rails.configuration.config_location}/github_config.yml")
+    config_hash = YAML.safe_load(File.read("#{Rails.configuration.config_location}/github_config.yml"))
+    config.x.github.client_id = config_hash['github']['client_id']
+    config.x.github.client_secret = config_hash['github']['client_secret']
+  end
+
+  # Configuration file storage location. Needs to be in a private folder
+  config.config_location = Rails.root.join('config').to_s
+
+  # Use a custom smtp server, such as gmail, mailgun, sendgrid
+  if File.size?("#{Rails.configuration.config_location}/smtp_config.yml")
+    config_hash = YAML.safe_load(File.read("#{Rails.configuration.config_location}/smtp_config.yml"))
+
+    # default from
+    ActionMailer::Base.default :from => config_hash['from']
+
+    config.action_mailer.perform_deliveries = true
+    config.action_mailer.raise_delivery_errors = true
+    config.action_mailer.delivery_method = :smtp
+
+    config.action_mailer.default_url_options = {
+      protocol: config_hash['protocol'],
+      host: config_hash['host']
+    }
+
+    config.action_mailer.default_options = {
+      from: config_hash['from']
+    }
+
+    smtp_settings = {
+      address: config_hash['address'],
+      port: config_hash['port'],
+      enable_starttls_auto: config_hash['enable_starttls_auto'],
+      authentication: config_hash['authentication'],
+      user_name: config_hash['user_name'],
+      password: config_hash['password']
+    }
+
+    if config_hash.key?('domain') && !config_hash['domain'].empty?
+      smtp_settings[:domain] = config_hash['domain']
+    end
+
+    if config_hash.key? 'ssl'
+      smtp_settings[:ssl] = config_hash['ssl']
+    end
+
+    if config_hash.key? 'tls'
+      smtp_settings[:tls] = config_hash['tls']
+    end
+
+    config.action_mailer.smtp_settings = smtp_settings
+  end
+
+  # Use custom routes for error pages
+  config.exceptions_app = self.routes
+end

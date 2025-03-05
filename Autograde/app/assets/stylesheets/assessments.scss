@@ -1,0 +1,21 @@
+@import 'variables';
+
+.badge {
+  &.blue {
+    margin-left: 0 !important;
+  }
+}
+
+.card-title {
+  margin-bottom: 0 !important;
+}
+
+.hover p {
+  display: none;
+}
+
+.collection-item:hover {
+  .hover {
+    display: block;
+  }
+}

@@ -1,0 +1,1720 @@
+/******************************************************************************
+ * RULE ORDER - keep CSS rules in alphabetical order                          *
+ *  keep browser prefix (-webkit-, -moz-, etc) rules with the standard rule   *
+ ******************************************************************************/
+
+/*******************************************
+* Class and ID Rules. Also pseudo classes *
+*******************************************/
+
+@import 'variables';
+
+#F2EFEF html,
+body {
+  height: 100%;
+}
+
+a {
+  color: $autolab-blue-text;
+}
+
+
+pre {
+  overflow-x: auto;
+}
+
+h2 {
+  font-size: 2.65rem;
+  font-weight: bold;
+}
+
+h3 {
+  font-size: 2.1rem;
+}
+
+/* Error Classes - for elements that display error/status messages */
+.error {
+  color: red;
+}
+.success {
+  color: green;
+}
+.fieldWithErrors {
+  display: inline;
+}
+
+/* Button Styles */
+
+.autolab .btn {
+  font-weight: normal;
+  background-color: $autolab-red;
+}
+
+.autocomplete-content {
+  margin-top: 0;
+}
+
+/* Helper Styles */
+
+.clickable {
+  cursor: pointer;
+}
+
+.full-width {
+  width: 100%;
+}
+
+/* Navbar Styling */
+
+div.main-header {
+  background-color: $autolab-red;
+  width: 100%;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.9);
+}
+
+div.main-header .logo {
+  display: inline-block;
+  vertical-align: top;
+  line-height: 54px;
+}
+
+div.main-header h2 {
+  font-size: 22px;
+  line-height: 54px;
+  color: #fff;
+
+  vertical-align: top;
+  margin: 0 4px;
+  font-weight: lighter;
+
+  a {
+    text-decoration: none;
+    color: #fff;
+    line-height: 32px;
+    margin-top: 11px;
+    margin-left: 2px;
+    border-left: 1px solid rgba(255, 255, 255, 0.7);
+    padding-left: 10px;
+    display: inline-block;
+  }
+}
+
+div.main-header img {
+  margin-top: 11px;
+  margin-left: 11px;
+  margin-bottom: 11px;
+}
+
+.action-links.navbar-nav {
+  list-style: none;
+  display: inline-block;
+  margin-right: 14px;
+  margin-top: 12px;
+}
+
+.action-links li {
+  display: inline-block;
+  margin-right: 6px;
+}
+
+.action-links.navbar-nav li a {
+  padding: 6px 10px;
+  background-color: #fff;
+  font-size: 14px;
+  line-height: 14px;
+  border-radius: 18px;
+  font-weight: normal;
+  color: $autolab-red;
+  border: 2px solid #fff;
+}
+
+.action-links.navbar-nav li a:hover {
+  text-decoration: none;
+  color: #fff;
+  background-color: transparent;
+}
+
+.action-links.navbar-nav .dropdown li {
+  width: 100%;
+}
+
+.action-links.navbar-nav .dropdown li:hover {
+  background-color: $autolab-subtle-gray;
+}
+
+.action-links.navbar-nav li.dropdown a {
+  border: none;
+}
+
+.action-links.navbar-nav li.dropdown a:hover {
+  color: $autolab-red;
+}
+
+.action-links .dropdown-menu .divider {
+  margin-top: 2px;
+  margin-bottom: 2px;
+}
+
+.annotationPane .left {
+  float: none !important;
+  margin-left: -10px;
+}
+
+#speedgrader {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  overflow: hidden;
+}
+
+/* Feedback Styling */
+.result-container {
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+}
+.result-pane {
+  border-radius: 10px;
+  padding: 2vh 2vw;
+  background-color: white;
+  border: 1px solid #C4C4C4;
+  margin-bottom: 2vh;
+}
+.feedback-container {
+  width: 74%;
+}
+.result-summary {
+  position: relative;
+  right: 0;
+  top: 0;
+  /* if the 25 is changed, also modify the containerWidth
+     multiplier in app/assets/javascripts/feedback.js */
+  width: 25%;
+}
+.result-fixed {
+  position: absolute;
+  width: 100%;
+  max-height: 70vh;
+  overflow-y: auto;
+}
+.feedback-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 1vh;
+  margin-bottom: 1vh;
+  border-bottom: 2px solid #C4C4C4;
+}
+#status-refresh {
+  display: flex;
+  align-items: center;
+
+  .material-icons {
+    &:hover {
+      cursor: pointer;
+    }
+  }
+}
+.result-container .feedback-header h3 {
+  margin-top: 0px;
+  margin-bottom: 0px;
+}
+
+.feedback-status {
+  padding: 0.5vh 1vw;
+  color: white;
+  font-weight: bold;
+  border-radius: 10px;
+  &__completed {
+    background-color: $autolab-green;
+  }
+  &__inprogress {
+    background-color: $autolab-red;
+  }
+  &__queued {
+    background-color: $autolab-blue-text;
+  }
+}
+
+/* Custom Form Styling */
+.input-field:not(.no-padding-bottom),
+form > div {
+  padding-bottom: 1rem !important;
+}
+
+.input-field label {
+  color: black;
+}
+
+.input-field label.active,
+[type="checkbox"] + label {
+  color: #444;
+  font-weight: 600;
+}
+
+input:not([type]):disabled,
+input[type="text"]:disabled,
+input[type="password"]:disabled,
+input[type="email"]:disabled,
+input[type="url"]:disabled,
+input[type="time"]:disabled,
+input[type="time"][readonly="readonly"],
+input[type="date"]:disabled,
+input[type="datetime"]:disabled,
+input[type="datetime-local"]:disabled,
+input[type="tel"]:disabled,
+input[type="tel"][readonly="readonly"],
+input[type="number"]:disabled,
+input[type="search"]:disabled,
+textarea.materialize-textarea:disabled {
+  background: #f2f2f2;
+  color: #666;
+}
+
+input[type="text"],
+input[type="email"] {
+  color: black;
+  font-weight: 400;
+}
+
+.tabs {
+  overflow-x: hidden;
+}
+
+::-webkit-input-placeholder {
+  /* Chrome/Opera/Safari */
+  color: #b1b1b1;
+}
+
+.checkbox-input {
+  // margin-bottom: 5vh;
+  margin-top: 2vh;
+}
+
+/* Further Styling */
+
+.caret {
+  border-color: transparent !important;
+}
+
+.navbar-nav.action-links > li > .dropdown-menu {
+  border-top-right-radius: 4px;
+  border-top-left-radius: 4px;
+  margin-top: 6px;
+}
+
+.main-header .dropdown {
+  display: inline-block;
+  margin-right: 18px;
+  line-height: 30px;
+  margin-left: 10px;
+}
+
+.main-header .dropdown-toggle {
+  color: #fff;
+  font-weight: normal;
+  cursor: pointer;
+}
+
+.main-header .dropdown-toggle .caret {
+  border-top: 4px solid #fff;
+}
+
+.main-header .dropdown-menu {
+  animation-duration: 0.2s;
+  -webkit-animation-duration: 0.2s;
+  -moz-animation-duration: 0.2s;
+}
+
+.navbar-toggle .icon-bar {
+  background-color: #fff;
+}
+
+.sub-navigation {
+  background-color: rgba(243, 240, 240, 0.9);
+  border-bottom: 1px solid rgba(223, 220, 220, 1);
+  margin-bottom: 15px;
+  padding: 0 15px;
+}
+.sub-navigation .left-nav,
+.sub-navigation .right-nav {
+  display: inline-block;
+}
+
+.sub-navigation .item {
+  color: rgb(183, 180, 180);
+  font-size: 16px;
+  line-height: 22px;
+  cursor: pointer;
+}
+
+.sub-navigation .item a,
+.sub-navigation .item .title {
+  padding: 14px;
+  display: inline-block;
+  color: inherit;
+  text-decoration: none;
+}
+
+.sub-navigation .left-nav .item:last-child {
+  color: rgb(103, 100, 100);
+  font-weight: bold;
+}
+
+.sub-navigation .item .upload-icon {
+  background-image: image-url("upload.png");
+  display: inline-block;
+  height: 51px;
+  width: 80px;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 50% auto;
+  cursor: pointer;
+
+  &:hover {
+    background-image: image-url("upload_highlighted.png");
+  }
+}
+
+.sub-navigation .item:hover {
+  color: rgb(103, 100, 100);
+}
+
+.sub-navigation .item + .item:before, /* IE8 *sigh* */
+.sub-navigation .item + .item::before {
+  color: #999696;
+  content: "»";
+  font-size: 24px;
+}
+
+@media (max-width: 768px) {
+  div.main-header h2 {
+    font-size: 16px;
+  }
+
+  .action-links.navbar-nav {
+    width: 100%;
+    margin: 0;
+  }
+
+  .action-links.navbar-nav li {
+    display: block;
+    border-bottom: 1px solid #fff;
+    margin: 0;
+  }
+
+  .action-links.navbar-nav li:last-child {
+    border-bottom: none;
+  }
+
+  .action-links.navbar-nav li a {
+    background-color: transparent;
+    width: 100%;
+    line-height: 36px;
+    color: #fff;
+    border: none;
+  }
+
+  .action-links.navbar-nav li.dropdown {
+    line-height: 36px;
+    border: none;
+  }
+  .action-links.navbar-nav li.dropdown .dropdown-toggle {
+    display: none;
+  }
+  .action-links.navbar-nav li.dropdown .dropdown-menu {
+    width: 100%;
+    position: static;
+    display: block;
+    border: none;
+    background-color: transparent;
+    -webkit-box-shadow: none;
+    box-shadow: none;
+  }
+}
+
+/* Handin Panel */
+
+.handin-panel {
+  background-color: rgba(243, 240, 240, 0.7);
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  /*padding: 18px;*/
+  top: -2.8rem;
+}
+
+.handin-panel p {
+  margin: 8px !important;
+}
+
+.handin-panel .card-action {
+  padding-right: 20px;
+  padding-left: 20px;
+  padding-top: 3px;
+  padding-bottom: 10px;
+}
+
+.handin-panel #submission_file {
+  display: none;
+}
+
+.handin-panel.modal {
+  display: none;
+}
+
+.handin-btn {
+  background-color: $autolab-red;
+  box-shadow: none;
+}
+.handin-btn-small {
+  padding: 0px 1.3rem;
+}
+
+.history-download-pane .material-icons {
+  font-size: 14px;
+}
+
+/* Footer - Information, About, etc. Should be in a <footer> tag. */
+div#footer {
+  clear: both;
+  font-size: 14px;
+  color: $autolab-black-text;
+  height: 42px;
+  padding: 0 10px;
+  margin-top: 16px;
+  border-top: 1px solid #fafafa;
+}
+
+div#footer .right {
+  padding-top: 14px;
+}
+
+div#footer a,
+div#footer span.site_version {
+  display: inline-block;
+  padding: 12px;
+  color: $autolab-black-text;
+}
+
+div#footer span.site_version {
+  float: right;
+}
+
+div#footer div.fb-like.fb_iframe_widget {
+  vertical-align: top;
+  margin-left: 8px;
+}
+
+div#footer a:hover {
+  text-decoration: none;
+  color: #428bca;
+}
+
+/* used for the submission history popup on submissions#index */
+#floater {
+  background-color: #fff;
+  border: 1px solid black;
+  display: none;
+  height: 80%;
+  left: 15%;
+  overflow: auto;
+  padding: 5px 10px;
+  position: fixed;
+  top: 10%;
+  width: 70%;
+}
+
+/* Gray Box Lists - for announcements and user accounts */
+ul.gray-box {
+  list-style-image: none;
+  list-style-type: none;
+  margin: 16px 0;
+  padding: 0;
+}
+ul.gray-box > li {
+  background-color: #fafafa;
+  border: 1px solid $autolab-subtle-gray;
+  color: #666;
+  margin: 0;
+  padding: 10px;
+}
+ul.gray-box > li + li {
+  margin-top: 8px;
+}
+ul.gray-box > li > *:first-child {
+  margin-top: 0;
+}
+ul.gray-box > li > *:last-child {
+  margin-bottom: 0;
+}
+ul.gray-box a {
+  text-decoration: none;
+}
+ul.gray-box b {
+  color: #555;
+}
+ul.gray-box.small {
+  margin: 8px 0;
+}
+ul.gray-box.small > li {
+  padding: 5px;
+}
+ul.gray-box.small > li + li {
+  margin-top: 4px;
+}
+
+/* This one is actually in use.  Just so we're clear. */
+.smallText {
+  font-size: 12px;
+}
+
+.center-align {
+  display: block;
+}
+
+.div-center {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/*This is the one that we're (I'm) using for required-field indicators.*/
+.redText {
+  color: red;
+}
+
+/**
+* Displayed on the home page
+**/
+
+div#publicCourse {
+  border: 2px dotted #000;
+  margin-right: 10%;
+  padding: 15px;
+}
+
+/* For autocompleting something. Not sure that these are in use anymore... */
+div.autoCompleteDiv {
+  background-color: white;
+  border: 1px solid black;
+  color: black;
+  margin-right: 10px;
+  padding: 2px;
+}
+div.autoCompleteDiv:hover,
+div.selectedAutoCompleteDiv {
+  background-color: #d2d2d2;
+  border: 1px solid black;
+  color: black;
+  margin-right: 10px;
+  padding: 2px;
+}
+
+/*
+ * For announcing Exams
+ */
+p.attention {
+  color: green;
+  font-style: italic;
+}
+
+.autolab .tooltip-inner {
+  white-space: pre;
+  max-width: none;
+}
+
+/**
+ * Moss Page Styling
+ **/
+.moss-dropdown {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  text-align: center;
+  padding-top: 5px;
+  padding-bottom: 5px;
+}
+.moss-dropdown h5 {
+  margin: 0;
+}
+.moss-dropdown i {
+  font-size: 32px;
+}
+ul.moss-list {
+  list-style: none;
+  border-radius: 5px;
+}
+ul.moss-list > li {
+  cursor: pointer;
+  background: $autolab-subtle-gray;
+  padding: 15px;
+  margin-bottom: 15px;
+}
+ul.moss-list > li > h5 {
+  font-weight: bold;
+  margin: 0;
+  padding-bottom: 10px;
+}
+ul.moss-inner-list {
+  list-style: none;
+  padding: 0;
+}
+ul.moss-inner-list > li {
+  background: $autolab-white;
+  cursor: default;
+  padding: 10px;
+  margin: 5px;
+  border-radius: 5px;
+}
+ul.moss-inner-list > li > h5 {
+  margin: 0;
+}
+ul.moss-inner-list > li > input[type="checkbox"]:not(:checked) ~ div {
+  display: none;
+}
+ul.moss-inner-list > li > input[type="checkbox"]:checked ~ div {
+  display: block;
+}
+
+/**
+ * Spans that behave as links.  Used for LDAP lookup on Create User Page
+ **/
+.spanLink {
+  color: #c90;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+div.field_with_errors {
+  display: inline;
+}
+
+.table-info {
+  margin-bottom: auto;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+
+  label {
+    color: inherit;
+    font-size: inherit;
+  }
+
+  [type="checkbox"] + span {
+    color: inherit;
+    font-size: inherit;
+  }
+}
+
+.green_cud {
+  color: green;
+}
+
+.red_cud {
+  color: red;
+}
+
+.green_cud,
+.red_cud {
+  font-weight: 400;
+}
+
+#unsorted_cuds {
+  display: none;
+}
+
+#sorted_cuds, #unsorted_cuds {
+  margin-top: 10px;
+}
+
+/* TABLE STYLES.  Styles for the multiple tables that we have for some reason */
+table.prettyBorder,
+table.prettyBorder tr,
+table.prettyBorder th,
+table.prettyBorder td {
+  text-align: left;
+}
+table.prettyBorder {
+  border-collapse: collapse;
+  box-shadow: 0 0 5px 0px $autolab-subtle-gray;
+  font-size: 15px;
+  width: 100%;
+  // keep track of what row this is
+  counter-reset: rowNumber;
+
+  tr {
+    background-color: #fff;
+    border: 1px solid #d0d0d0;
+    &:hover {
+      background-color: $autolab-sky-blue;
+    }
+  }
+
+  .user-row {
+    // Increment counter for each non-heading row
+    counter-increment: rowNumber;
+
+    .row-index::before {
+      // populate the row index
+      content: counter(rowNumber);
+    }
+  }
+
+  thead.float th {
+    z-index: 1;
+    position: sticky;
+    top: 0;
+  }
+  th {
+    background-color: $autolab-light-grey;
+    color: $autolab-black;
+    cursor: pointer;
+    font-family: Source Sans Pro, sans-serif;
+    font-size: 0.8em;
+    font-weight: bold;
+    padding: 8px;
+    text-align: left;
+    text-transform: uppercase;
+  }
+
+  .submissions-th {
+    padding: 25px 0 25px 0;
+    font-size: 0.9rem;
+    div {
+      display: flex;
+      align-items: center;
+    }
+    p {
+      margin: 0;
+      float: left;
+      padding-right: 3px;
+    }
+  }
+
+  .sorting_desc {
+    .sort-icon__both, .sort-icon__up {
+      display: none;
+    }
+    .sort-icon__down {
+      display: inline;
+    }
+  }
+  .sorting_asc {
+    .sort-icon__both, .sort-icon__down {
+      display: none;
+    }
+    .sort-icon__up {
+      display: inline;
+    }
+  }
+
+  .sort-icon__up, .sort-icon__down {
+    display: none;
+  }
+
+  td {
+    border: 1px solid #ddd;
+    padding: 0 5px;
+  }
+
+  .submissions-td {
+    border-style: none;
+    padding: 5px 0 5px 0;
+  }
+
+  .submissions-cbox-label {
+    display: flex;
+    justify-content: center;
+    span::before {
+      left: 6px;
+    };
+    [type="checkbox"]:checked + span:not(.lever):before {
+      left: 3px;
+    };
+  }
+
+  tr.selected {
+    background-color: $autolab-subtle-gray;
+  }
+
+  tr .btn.small {
+    margin-top: 3px;
+    margin-bottom: 3px;
+    width: 38px;
+    padding-left: 10px;
+  }
+}
+
+table.navigatable tr {
+  height: 30px;
+  border-bottom: 1px solid #f3f3f3;
+}
+
+table.navigatable tr:hover {
+  background-color: #f3f3f3;
+}
+
+/* Card Styling */
+
+.card {
+  font-weight: normal;
+
+  .collection,
+  .card-action {
+    border-radius: initial;
+  }
+
+  .row {
+    margin: 0;
+  }
+
+  .card-content.white .card-title {
+    line-height: normal;
+    font-size: 2.65rem;
+    font-weight: bold;
+  }
+
+  .card-content .card-title.white-text {
+    line-height: normal;
+    font-size: 24px;
+    word-break: break-word;
+  }
+
+  .collection {
+    margin-top: 0;
+    margin-bottom: 0;
+    border-left: 0;
+    border-right: 0;
+    border-bottom: 0;
+  }
+}
+
+/* badge */
+.badge.padded-badge {
+  padding: 2px 10px;
+}
+
+.badge.metrics-badge {
+  background-color: #008fcc !important;
+  border-radius: 10px !important;
+  padding: 0px 1px;
+  margin-left: -6px;
+  margin-right: 35px;
+  margin-top: 8px;
+  line-height: 16px;
+  height: 16px;
+  min-width: 1.8rem;
+  font-size: 0.75rem !important;
+}
+
+.row.metrics .col.metrics {
+  padding: 0px 0px;
+}
+
+h7.metrics {
+  margin-left: -38px;
+  margin-right: -10px;
+}
+
+/* collections */
+.collection a.collection-item {
+  transition: none;
+}
+
+.input-field label {
+  transition: none;
+}
+
+/* General Styling */
+
+body.autolab {
+  font-family: "Source Sans Pro", sans-serif;
+  font-weight: 300;
+  font-size: 16px;
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6,
+  .h1,
+  .h2,
+  .h3,
+  .h4,
+  .h5,
+  .h6,
+  button,
+  input,
+  optgroup,
+  select,
+  textarea {
+    font-family: "Source Sans Pro", sans-serif;
+  }
+
+  h3 {
+    margin-top: 15px;
+  }
+  h4 {
+    font-size: 22px;
+    font-weight: bold;
+  }
+}
+
+
+input[type="text"],
+input[type="email"],
+input[type="password"],
+textarea {
+  height: auto;
+  margin-top: 0.2rem;
+  margin-bottom: 0.2rem;
+  padding: 5px 0 5px 0;
+  border-color: $autolab-highlight-gray;
+  box-shadow: 0 1px 0 0 $autolab-highlight-gray;
+  outline: none;
+  font-weight: 400;
+}
+
+input[type="text"],
+input[type="email"] {
+  box-sizing: border-box;
+}
+
+input[type="text"]:focus,
+input[type="email"]:focus,
+input[type="password"]:focus {
+  outline: none;
+}
+
+// To remove line for file-field
+.file-field input[type="text"].validate,
+.file-field input[type="text"].validate.valid {
+  border-bottom: none;
+  box-shadow: none;
+}
+
+input[type="checkbox"] {
+  // For spacing between this and an adjacent label
+  margin-right: 10px;
+}
+
+input[type="search"] {
+  border-bottom: 1px $autolab-highlight-gray;
+  box-shadow: 0 1px 0 0 $autolab-highlight-gray;
+}
+
+.flatpickr-input {
+  color: black !important;
+}
+
+.file-path-wrapper input[type="text"] {
+  margin-bottom: 2px;
+}
+
+div.file-field.input-field {
+  padding-top: 0;
+  margin-top: -0.5rem !important;
+}
+
+.flatpickr-input.form-control.input {
+  color: black;
+}
+
+.flatpickr-hour {
+  margin-top: 0 !important;
+  margin-bottom: 0.8rem;
+  padding-top: 0 !important;
+}
+
+.flatpickr-minute {
+  margin-top: 0 !important;
+  margin-bottom: 0.8rem;
+  padding-top: 0 !important;
+}
+
+.flatpickr-monthDropdown-months {
+  display: inline;
+}
+
+.input-field {
+  margin-top: 2rem !important;
+  label.control-label {
+    font-size: 18px;
+  }
+
+  label.active {
+    font-size: 18px;
+  }
+}
+
+#error-block {
+  color: red;
+  font-size: 15px;
+  margin-top: 0;
+  margin-bottom: 10px;
+}
+
+.help-block,
+form p:last-child {
+  color: black;
+  font-size: 15px;
+  margin-top: 0;
+  margin-bottom: 10px;
+}
+
+.autolab select.form-control {
+  height: 34px;
+}
+
+.autolab .form-control {
+  display: block;
+  width: 100%;
+  /* These are used to overwrite bootstrap's .form-control properties
+     and using our default input styling */
+  border-radius: inherit;
+  box-shadow: inherit;
+  height: inherit;
+}
+
+.autolab .input-group-addon select.form-control {
+  height: inherit;
+  width: 80px;
+  border: none;
+}
+
+.page-wrapper {
+  min-height: 100%;
+  /* equal to footer height */
+  margin-bottom: -42px;
+}
+.page-wrapper:after {
+  content: "";
+  display: block;
+}
+.page-wrapper:after {
+  /* .push must be the same height as footer */
+  height: 42px;
+}
+
+.section-title {
+  position: relative;
+  text-align: left;
+}
+
+.section-title:before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 100%;
+  border-bottom: 4px solid #dddddd;
+}
+
+.section-title span {
+  position: relative;
+  padding-right: 12px;
+}
+
+/**
+* Switch styling
+*/
+
+.switch > label > b {
+  font-size: 1.1rem;
+  color: black
+}
+
+label[for="switch"] {
+  font-size: 1rem;
+  color: darkslategrey;
+}
+
+
+/**
+ * Checkbox styling
+ */
+
+.autolab .checkbox {
+  position: relative;
+  display: inline-block;
+  min-width: 75px;
+  text-align: left;
+}
+
+.checkbox input[type="checkbox"] {
+  visibility: hidden;
+}
+
+.checkbox label {
+  margin-left: 8px;
+}
+
+.checkbox label::before {
+  cursor: pointer;
+  position: absolute;
+  display: inline-block;
+  width: 24px;
+  height: 24px;
+  top: -2px;
+  left: -2px;
+  background: $autolab-subtle-gray;
+  border: 1px solid #ddd;
+  content: "";
+  border-radius: 2px;
+}
+
+.checkbox label::after {
+  opacity: 0.1;
+  content: "";
+  position: absolute;
+  width: 12px;
+  height: 7px;
+  background: transparent;
+  top: 5px;
+  left: 4px;
+  border: 3px solid #666;
+  border-top: none;
+  border-right: none;
+
+  -webkit-transform: rotate(-45deg);
+  -moz-transform: rotate(-45deg);
+  -o-transform: rotate(-45deg);
+  -ms-transform: rotate(-45deg);
+  transform: rotate(-45deg);
+}
+
+.checkbox label:hover::after {
+  opacity: 0.5;
+}
+
+.checkbox input[type="checkbox"]:checked + label::after {
+  opacity: 1;
+}
+
+.checkbox input[type="checkbox"]:checked + label::before {
+  border: 1px solid #bbb;
+
+}
+
+.new_submission {
+  margin-top: 1rem;
+}
+
+.options {
+  line-height: 36px;
+  list-style: none;
+  border-top: 1px solid $autolab-subtle-gray;
+  padding-left: 0;
+}
+
+.options li:hover {
+  background-color: $autolab-subtle-gray;
+}
+
+.options li {
+  border-bottom: 1px solid $autolab-subtle-gray;
+}
+
+.options li a {
+  padding-left: 14px;
+  display: block;
+}
+
+.options .no-hover:hover {
+  background-color: transparent;
+}
+
+.options .danger-side {
+  border-left: 6px solid #e53935;
+  border-right: 1px solid #e53935;
+}
+
+.options .danger-bottom {
+  border-bottom: 1px solid #e53935;
+}
+
+.options .collection-item {
+  padding-left: 14px;
+}
+
+/* Form Tables */
+
+.verticalTable tr {
+  height: 48px;
+  padding-top: 2px;
+  padding-bottom: 2px;
+}
+
+#sudo_email {
+  margin-bottom: 2rem;
+}
+
+/* Homepage Styling */
+
+.home {
+  text-align: center;
+
+  input[type="text"],
+  input[type="email"],
+  input[type="password"] {
+    min-width: 240px;
+    margin-top: 6px;
+    margin-bottom: 20px;
+    width: 38%;
+  }
+
+  input[type="submit"] {
+    min-width: 220px;
+  }
+
+  label {
+    margin-top: 10px;
+    margin-bottom: 10px;
+  }
+
+  hr {
+    max-width: 320px;
+  }
+
+  .checkbox {
+    width: 220px;
+    margin-top: 18px;
+    margin-bottom: 18px;
+  }
+
+  h2 {
+    margin-bottom: 20px;
+  }
+}
+
+/* Login Panel */
+
+.login-logo {
+  width: 8%;
+}
+
+@media (max-width: 768px) {
+  .login-logo {
+    width: 15%;
+  }
+}
+
+.action-menu {
+  font-size: 16px;
+  line-height: 24px;
+}
+
+/* Header content for graphics */
+div.center {
+  text-align: center;
+}
+
+/*  Warnings  */
+
+#flashes {
+  margin-top: 8px;
+}
+
+/*
+ * The canonical flashes are :alert and :notice
+ * The custom flashes are :error (alias for :alert) and :success
+ * In practice, :error, :notice, and :success are used
+ */
+
+#flash_alert,
+#flash_error,
+#flash_notice,
+#flash_success {
+  padding: 10px;
+  margin-bottom: 0px;
+  border-radius: 3px;
+  border: 1px solid $autolab-subtle-gray;
+  font-weight: 500;
+}
+
+#flash_alert,
+#flash_error {
+  color: #ce4844;
+  border-left: 5px solid #ce4844;
+}
+
+#flash_alert table,
+#flash_error table {
+  color: rgba(0, 0, 0, 0.87);
+  font-weight: 300;
+}
+
+#flash_alert p,
+#flash_error p {
+  margin: 0px;
+}
+
+#flash_notice {
+  color: #1b809e;
+  border-left: 5px solid #1b809e;
+}
+
+#flash_success {
+  color: green;
+  border-left: 5px solid green;
+}
+
+.attachments,
+.padding-none {
+  padding: 0;
+}
+
+.attachment {
+  font-weight: bold;
+  color: $autolab-subtle-gray;
+  border: 2px solid $autolab-subtle-gray;
+  border-radius: 6px;
+  list-style: none;
+  padding: 8px;
+  padding-left: 12px;
+  margin-bottom: 5px;
+  line-height: 30px;
+
+  .right a {
+    vertical-align: top;
+  }
+
+  .material-icons {
+    margin-right: 10px;
+  }
+
+  &:hover {
+    color: $autolab-highlight-gray;
+    border-color: $autolab-highlight-gray;
+  }
+
+  &.add {
+    border: none;
+  }
+}
+
+.page-canvas-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+/* Restore hover functionality on Materialize buttons with color classes */
+.btn:hover {
+  background-color: rgba(140, 0, 0, 0.95) !important;
+}
+
+.drag-drop-handin {
+  height: 120px;
+  border: 3px dashed grey;
+  border-radius: 10px;
+  cursor: pointer;
+  margin-top: 10px;
+  align-items: center;
+  justify-content: center;
+
+  -webkit-touch-callout: none; /* iOS Safari */
+  -webkit-user-select: none; /* Safari */
+  -khtml-user-select: none; /* Konqueror HTML */
+  -moz-user-select: none; /* Firefox */
+  -ms-user-select: none; /* Internet Explorer/Edge */
+  user-select: none; /* Non-prefixed version, currently
+                                supported by Chrome and Opera */
+}
+
+.drag-drop-handin:hover {
+  background: rgba(0, 0, 0, 0.05);
+}
+
+.drag-drop-handin:focus {
+  background: rgba(0, 0, 0, 0.05);
+}
+
+#remove-handed-in {
+  color: grey;
+  cursor: pointer;
+}
+
+/* Remove padding around collapsible of action links in handin page */
+.collapsible-menu-link > .collapsible-body {
+  padding: 0 0 0 0;
+}
+
+.collapsible-menu-link > .collapsible-header {
+  padding: 0 0 5px 15px;
+}
+
+.nobr {
+  white-space: nowrap;
+}
+
+/* For skipping to main content button */
+a.skip-main {
+  position: absolute;
+  top: auto;
+  left: -100px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  z-index: -999;
+}
+
+a.skip-main:focus,
+a.skip-main:active {
+  background-color: #fff;
+  left: auto;
+  top: auto;
+  width: 30%;
+  height: auto;
+  overflow: auto;
+  padding: 5px;
+  font-size: 1em;
+  z-index: 999;
+}
+
+// used in submission_history_table.html.erb
+table.sub {
+  display: table;
+}
+
+.sub th {
+  vertical-align: top;
+}
+table.sub td, th {
+  padding-right: 25px;
+}
+
+.autograding-in-progress {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+@keyframes spin {
+  from {
+    transform:rotate(0deg);
+  }
+  to {
+    transform:rotate(360deg);
+  }
+}
+.refresh-feedback.loading {
+  animation: spin 2s linear infinite;
+}
+.refresh-feedback {
+  color: $autolab-blue-text;
+  margin-right: 1vw;
+}
+.refresh-feedback:hover {
+  cursor: pointer;
+}
+.autograding-in-progress:before, .autograding-in-progress:after{
+  content: "";
+  flex: 1 1;
+  border-bottom: 2px dashed;
+  margin: auto;
+}
+.autograding-in-progress:before {
+  margin-right: 10px
+}
+.autograding-in-progress:after {
+  margin-left: 10px
+}
+
+.submissions {
+  overflow-x: auto;
+}
+
+.submission-history-button {
+  white-space: nowrap;
+  text-transform: unset !important;
+  font-size: 13px;
+  width: 100%;
+  border-radius: 5px;
+  color: $autolab-blue-text;
+  box-shadow: 0px -0.5px 0.5px 0px rgba(0, 0, 0, 0.15),
+  0px 0.5px 0.5px 0.5px rgba(0, 0, 0, 0.15),
+  0px 0.5px 0.5px -0.5px rgba(0, 0, 0, 0.15);
+  display: flex;
+  justify-content: center;
+}
+
+.submission-history-button:hover {
+  color: white !important;
+}
+
+.oauth-btn:hover {
+  background-color: $autolab-subtle-gray !important;
+}
+
+.error-header {
+  color: $autolab-red;
+}
+
+
+/* Manage Submissions */
+.btn.submissions-main {
+  margin: 0;
+  padding: 5px 10px 5px 5px;
+  min-height: 36px;
+  height: auto;
+  line-height: 1.3;
+  display: flex;
+  align-items: center;
+}
+
+.btn.submissions-main i.left {
+  margin-right: 6px;
+}
+
+.btn.submissions-selected {
+  margin: 0;
+  margin-right: 10px;
+  padding: 0px 10px 0px 5px;
+  display: flex;
+}
+
+.btn.submissions-selected i {
+  margin: 0 6px 0 4px;
+}
+
+.buttons-row {
+  display: flex;
+  flex-direction: row;
+}
+
+.buttons-spacing {
+  margin-right: 10px;
+  a {
+    overflow-y: hidden;
+  }
+}
+
+.submissions-tweak-button {
+  margin-left: 3px;
+  color: $autolab-medium-gray;
+}
+
+.submissions-tweak-points {
+  color: $autolab-blue-text;
+}
+
+.excused-popover {
+  display: none;
+  position: absolute;
+  width: 100px;
+  height: 100px;
+  background-color: gray;
+}
+
+#selected-buttons {
+  height: 75px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+}
+
+.selected-buttons-placeholder {
+  display: none;
+}
+
+.submissions-checkbox {
+  margin-left: 35px;
+}
+
+.submissions-center-icons {
+  display: flex;
+  align-items: center;
+}
+
+.excused-popover {
+  background-color: $autolab-submissions-background;
+  border-radius: 11px;
+  width: auto;
+  height: auto;
+  z-index: 999;
+  padding: 12px 30px;
+  box-shadow: 0 2px 2px 0 $autolab-excused-popover-background;
+}
+
+.excuse-popover-content {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+}
+
+.excuse-popover-content-text {
+  padding: 0;
+  margin: 0;
+  font-size: 16px;
+  line-height: 23.88px;
+}
+
+.excuse-popover-content-header {
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 25.14px;
+  letter-spacing: -0.01em;
+}
+
+.excuse-popover-buttons {
+  display: flex;
+  gap: 16px;
+  padding-top: 8px;
+}
+
+.btn.excuse-popover-cancel {
+  background-color: $autolab-submissions-background;
+  border: 0.5px solid $autolab-dark-grey;
+  color: $autolab-dark-grey;
+}
+
+.btn.excuse-popover-cancel:hover {
+  background-color: $autolab-submissions-background;
+  color: white;
+}
+
+.submissions-center-icons .btn i{
+  margin: 0;
+}
+
+.submissions-center-icons p {
+  margin: 0 0 0 10px;
+}
+
+.submissions-excused-label {
+  color: $autolab-label;
+  margin: 0 0 0 5px;
+  font-size: 12px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.submissions-icons {
+  margin-left: 3px;
+}
+
+.submissions-name {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.submissions-score-align {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  .score-num {
+    width: 40%;
+  }
+  .score-icon {
+    width: 20%;
+  }
+}
+
+.submissions-score-icon {
+  margin-left: 5px;
+  margin-top: 5px;
+  color: $autolab-grey;
+}

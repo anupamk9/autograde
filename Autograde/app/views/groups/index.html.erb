@@ -1,0 +1,81 @@
+<% @title = "Groups" %>
+
+<h4>Groups</h4>
+<% unless @assessment.allow_student_assign_group %>
+  <ul class="collection">
+    <li class="collection-item">
+      Students are not allowed to self-assign groups for this assessment.
+      <br>
+      For convenience, you will not be added to groups that you create and students do not need to confirm their membership.
+    </li>
+  </ul>
+<% end %>
+<% if @groups.size > 0 %>
+
+  <table class=prettyBorder>
+    <tr>
+      <th>Group Name</th>
+
+      <% @assessment.group_size.times do |i| %>
+        <th>Member</th>
+      <% end %>
+
+      <th>Options</th>
+    </tr>
+
+    <% @groups.each do |group| %>
+      <tr>
+        <td><%= link_to group.name, course_assessment_group_path(@course, @assessment, group) %></td>
+
+        <% group.assessment_user_data.each do |aud| %>
+          <% cud = aud.course_user_datum %>
+          <td>
+            <%= cud.email %>
+            <% unless aud.group_confirmed then %>
+              (Unconfirmed)
+            <% end %>
+          </td>
+        <% end %>
+
+        <% (@assessment.group_size - group.assessment_user_data.size).times do %>
+          <td>&ndash;</td>
+        <% end %>
+
+        <td>
+          <%= link_to "Edit", course_assessment_group_path(@course, @assessment, group) %> |
+          <%= link_to "Destroy", course_assessment_group_path(@course, @assessment, group),
+                      method: :delete, data: { confirm: "Are you sure you want to disband this group?" } %>
+        </td>
+      </tr>
+    <% end %>
+  </table>
+<% else %>
+  <p>
+    No Groups have been set yet.
+  </p>
+<% end %>
+
+<br>
+<%= link_to new_course_assessment_group_path(@course, @assessment) do %>
+  <span class="btn primary">
+    Create New Group
+  </span>
+<% end %>
+
+<% if @grouplessCUDs.size > 0 %>
+  <h4>Users Without Groups</h4>
+
+  <ul class="small gray-box">
+    <% @grouplessCUDs.each do |cud| %>
+      <li><b><%= cud.email %></b></li>
+    <% end %>
+  </ul>
+<% end %>
+
+<% if @groupAssessments.size > 0 %>
+  <h4>Load Groups from Another Assessment</h4>
+  <%= form_tag import_course_assessment_groups_path(@course, @assessment) do %>
+    <%= select_tag :ass, options_from_collection_for_select(@groupAssessments, :id, :name) %>
+    <%= submit_tag 'Import Groups', class: "btn btn-primary" %>
+  <% end %>
+<% end %>

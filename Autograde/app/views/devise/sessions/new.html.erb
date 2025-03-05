@@ -1,0 +1,50 @@
+<div class="sign-in-panel home">
+<br>
+
+<%= form_for(resource, as: resource_name, url: session_path(resource_name)) do |f| %>
+
+  <img src="/images/autolab.svg" alt="" class="valign login-logo">
+  <h5>Login to Autolab</h5>
+
+  <div><%= f.email_field :email, autofocus: true, placeholder: "Email Address" %></div>
+  <div><%= f.password_field :password, placeholder: "Password" %></div>
+
+  <% if devise_mapping.rememberable? -%>
+  <label>
+      <%= f.check_box :remember_me %>
+      <span> <%= f.label :remember_me %> </span> <br>
+  </label>
+  <p></p>
+  <% end -%>
+  <div><%= f.submit "Sign in", class: "btn primary" %></div>
+<% end %>
+
+<%- if devise_mapping.omniauthable? %>
+  <% configured_providers = OauthConfigController.get_oauth_providers %>
+  <%- resource_class.omniauth_providers.each do |provider| %>
+    <%- if configured_providers.include? provider %>
+      <% if provider.to_s.titleize == "Shibboleth" %>
+        <b><%= link_to "Sign in with your CMU account", user_shibboleth_omniauth_authorize_path(provider) %></b><br>
+      <% elsif provider.to_s.titleize == "Google Oauth2" %>
+        <%= button_to omniauth_authorize_url(resource_name, :google_oauth2), method: :post, class: 'btn white black-text oauth-btn' do %>
+          <div class="col s12 m6 offset-m3 valign-wrapper">
+            <div class="left valign-wrapper">
+              <img width="20px" style="margin-right:8px" alt="Google sign-in" src="/images/google_logo.png">
+            </div>
+            Sign in with Google
+          </div>
+        <% end %>
+      <% else %>
+        <%= button_to "Sign in with #{provider.to_s.titleize}", omniauth_authorize_path(resource_name, provider), method: :post, class: 'btn white black-text oauth-btn' %>
+      <% end %>
+    <% end -%>
+  <% end -%>
+<% end -%>
+<br>
+
+<% if Rails.env == "development" %>
+  <%= link_to "Developer Login", "/home/developer_login" %><br>
+<% end %>
+<%= render "devise/shared/links" %>
+
+</div>

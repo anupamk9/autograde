@@ -1,0 +1,18 @@
+<% @title = "Run Scheduler" %>
+
+<% content_for :javascripts do %>
+  <script type="text/javascript">
+    $(function () {
+      $.post("visualRun", function (returned) {
+        $(".output").html(returned);
+      });
+    });
+  </script>
+<% end %>
+
+<h4>Running scheduler</h4>
+
+<div class="output">
+  Running script...
+</div>
+<%= link_to 'Back', course_schedulers_path(@course), { class: "btn" } %>

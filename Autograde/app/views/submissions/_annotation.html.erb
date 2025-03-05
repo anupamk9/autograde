@@ -1,0 +1,27 @@
+<% if @submission.grades_released?(@cud) %>
+<div class="base-annotation-line annotation-line">
+  <div class="line-sticky">
+    <div class="line-number"></div>
+    <div class="code-separator"></div>
+  </div>
+  <%= render "annotation_form", global: false, popup: false %>
+  <div class="annotation-box" style="display: none;">
+    <div class="annotation-header">
+      <div class="annotation-from">
+      <span class="submitted_by"></span> says:
+      </div>
+      <div class="annotation-tools">
+        <span class="instructors-only" style="display: none;">
+            <a class="annotation-edit-button" href="#"><i class="material-icons">edit</i></a>
+            <a class="annotation-delete-button" href="#"><i class="material-icons">delete</i></a>
+        </span>
+        <span class="point_badge neutral"><span class="problem"><span class="problem_id"></span>:</span> <span class="value"></span></span>
+      </div>
+    </div>
+    <div class="annotation-separator"></div>
+    <div class="annotation-body">
+      <div class="comment"></div>
+    </div>
+  </div>
+</div>
+<% end %>
