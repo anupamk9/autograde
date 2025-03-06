@@ -9,7 +9,7 @@
 #
 FROM phusion/passenger-ruby32:2.6.1
 
-MAINTAINER Autolab Development Team "autolab-dev@andrew.cmu.edu"
+MAINTAINER Autolab Development Team "anupam.kumar@mca.christuniversity.in"
 
 # Change to your time zone here
 RUN ln -fs /usr/share/zoneinfo/America/New_York /etc/localtime

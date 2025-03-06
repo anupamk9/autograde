@@ -1,17 +1,17 @@
 production:
-  school_name: "My School"
-  school_short_name: "MS"
-  support_email: "autolab@myschool.edu"
-  tech_email: "autolab-tech@myschool.edu"
+  school_name: "School of Sciences"
+  school_short_name: "MCA"
+  support_email: "anupam.kumar@mca.christuniversity.in"
+  tech_email: "anupam.kumar@mca.christuniversity.in"
 
 development:
-  school_name: "Carnegie Mellon University"
-  school_short_name: "CMU"
-  support_email: "autolab@myschool.edu"
-  tech_email: "autolab-tech@myschool.edu"
+  school_name: "Christ University"
+  school_short_name: "CU"
+  support_email: "anupam.kumar@mca.christuniversity.in"
+  tech_email: "anupam.kumar@mca.christuniversity.in"
 
 test:
-  school_name: "Carnegie Mellon University"
-  school_short_name: "CMU"
-  support_email: "autolab@myschool.edu"
-  tech_email: "autolab-tech@myschool.edu"
+  school_name: "Christ University"
+  school_short_name: "CU"
+  support_email: "anupam.kumar@mca.christuniversity.in"
+  tech_email: "anupam.kumar@mca.christuniversity.in"
