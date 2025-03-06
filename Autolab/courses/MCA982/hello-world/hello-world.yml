@@ -1,0 +1,19 @@
+---
+dates:
+  due_at: '2025-03-07 09:58:48 +0530'
+  end_at: '2025-03-07 09:58:48 +0530'
+  start_at: '2025-03-07 09:58:48 +0530'
+general:
+  allow_student_assign_group: true
+  category_name: python code
+  disable_network: false
+  display_name: hello world
+  github_submission_enabled: true
+  group_size: 1
+  handin_directory: handin
+  handin_filename: handin.tgz
+  is_positive_grading: false
+  max_grace_days: 0
+  max_size: 2
+  max_submissions: -1
+problems: []
