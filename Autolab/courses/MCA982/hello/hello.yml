@@ -4,25 +4,30 @@ autograder:
   autograde_timeout: 180
   release_score: true
 dates:
-  due_at: '2025-03-07 09:58:00 +0530'
-  end_at: '2025-03-10 09:58:00 +0530'
-  start_at: '2025-03-07 09:58:00 +0530'
+  due_at: '2025-03-08 13:11:00 +0530'
+  end_at: '2025-03-21 13:11:00 +0530'
+  start_at: '2025-03-06 13:11:00 +0530'
 general:
   allow_student_assign_group: true
-  category_name: python code
+  category_name: Lab
   description: ''
   disable_handins: false
   disable_network: false
-  display_name: hello world
+  display_name: Hello
   embedded_quiz: false
   github_submission_enabled: true
   group_size: 1
   handin_directory: handin
   handin_filename: hello.c
-  handout: ''
+  handout: hello-handout.tar
   is_positive_grading: false
   max_grace_days: 0
   max_size: 2
   max_submissions: -1
-  writeup: ''
-problems: []
+  writeup: writeup/hello.html
+problems:
+- description: ''
+  max_score: 100.0
+  name: Correctness
+  optional: false
+  starred: false
