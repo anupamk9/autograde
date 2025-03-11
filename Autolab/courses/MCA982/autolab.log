@@ -498,3 +498,13 @@ INFO -- 03/07/25 02:55:22 -- SendJob failed for 6
           error name: tango_add_job
 
           additional error data: Tango returned negative status code: ["Fri Mar  7 07:55:22 2025|validateJob: Image not found: autograding_image", "Fri Mar  7 07:55:22 2025|validateJob: Job rejected: 1 errors"]
+INFO -- 03/08/25 00:55:25 -- Dir: /home/app/webapp/courses/MCA982/hello
+INFO -- 03/08/25 00:55:25 -- Upload File List: [{"localFile"=>"/home/app/webapp/courses/MCA982/hello/handin/anupamniv0@gmail.com/3_hello.c", "remoteFile"=>"anupamniv0@gmail.com_3_hello.c", "destFile"=>"hello.c"}, {"localFile"=>"/home/app/webapp/courses/MCA982/hello/autograde-Makefile", "destFile"=>"Makefile"}, {"localFile"=>"/home/app/webapp/courses/MCA982/hello/autograde.tar", "destFile"=>"autograde.tar"}]
+INFO -- 03/08/25 00:55:25 -- Submission 6 SAVED for anupamniv0@gmail.com on hello, file 3_hello.c (application/octet-stream),version: 3
+INFO -- 03/08/25 00:55:25 -- Callback: http://localhost/courses/MCA982/assessments/hello/autograde_done?dave=RFNYCHOGATVMTTGKYJLCAUTIQMQOOVUGOJRVKUTPNFMTUFWDGICJLWVRVXAY&submission_id=6
+INFO -- 03/08/25 00:55:25 -- Submission 6 SAVED for anupamniv0@gmail.com on hello, file 3_hello.c (application/octet-stream),version: 3
+INFO -- 03/08/25 00:55:37 -- Dir: /home/app/webapp/courses/MCA982/hello
+INFO -- 03/08/25 00:55:37 -- Upload File List: [{"localFile"=>"/home/app/webapp/courses/MCA982/hello/handin/anupamniv0@gmail.com/3_hello.c", "remoteFile"=>"anupamniv0@gmail.com_3_hello.c", "destFile"=>"hello.c"}, {"localFile"=>"/home/app/webapp/courses/MCA982/hello/autograde-Makefile", "destFile"=>"Makefile"}, {"localFile"=>"/home/app/webapp/courses/MCA982/hello/autograde.tar", "destFile"=>"autograde.tar"}]
+INFO -- 03/08/25 00:55:37 -- Submission 6 SAVED for anupamniv0@gmail.com on hello, file 3_hello.c (application/octet-stream),version: 3
+INFO -- 03/08/25 00:55:37 -- Callback: http://localhost/courses/MCA982/assessments/hello/autograde_done?dave=KWADKMEDNTPVALUEPKKNEAMYCLRTDIUPBASDWRQRNLAEGVSSXKOUDLFDKNHB&submission_id=6
+INFO -- 03/08/25 00:55:37 -- Submission 6 SAVED for anupamniv0@gmail.com on hello, file 3_hello.c (application/octet-stream),version: 3
